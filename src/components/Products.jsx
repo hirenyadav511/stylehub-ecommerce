@@ -1,31 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
+import { CartContext } from "../context/CartContext";
+import { useAuth } from "@clerk/clerk-react";
 
 const Products = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
+  const { addItem } = useContext(CartContext);
+  const navigate = useNavigate();
+  const { isSignedIn } = useAuth();
 
-  const componentMounted = true;
+  const componentMounted = useRef(true);
 
   useEffect(() => {
     let getProducts = async () => {
       setLoading(true);
       const response = await fetch("https://fakestoreapi.com/products");
-      if (componentMounted) {
+      if (componentMounted.current) {
         setData(await response.clone().json());
         setFilter(await response.json());
         setLoading(false);
-        console.log(filter);
       }
-      return () => {
-        componentMounted = false;
-      };
     };
 
     getProducts();
+    
+    return () => {
+      componentMounted.current = false;
+    };
   }, []);
+
+  const handleAddToCart = (product) => {
+    if (isSignedIn) {
+      addItem(product);
+    } else {
+      navigate("/login");
+    }
+  };
 
   const Loading = () => {
     return (
@@ -102,9 +115,15 @@ const Products = () => {
                       {product.title.substring(0, 12)}...
                     </h5>
                     <p className="card-text lead fw-bold">${product.price}</p>
-                    <NavLink to={`/products/${product.id}`} className="btn btn-outline-dark">
-                      Buy Now
+                    <NavLink to={`/products/${product.id}`} className="btn btn-outline-dark me-2">
+                       Buy Now
                     </NavLink>
+                    <button
+                      className="btn btn-outline-dark"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
               </div>

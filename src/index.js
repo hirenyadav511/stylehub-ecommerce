@@ -8,12 +8,24 @@ import "../node_modules/font-awesome/css/font-awesome.min.css";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { CartProvider } from "./context/CartContext";
+import { ClerkProvider } from "@clerk/clerk-react";
+
+const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key");
+}
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <Provider store={store}>
-      <App />
+      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+        <CartProvider>
+          <App />
+        </CartProvider>
+      </ClerkProvider>
     </Provider>
   </BrowserRouter>
 );

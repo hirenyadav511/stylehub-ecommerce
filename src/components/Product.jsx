@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useDispatch } from "react-redux";
-import { addCart } from "../redux/action";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
+import { useAuth } from "@clerk/clerk-react";
 
 const Product = () => {
   const { id } = useParams();
   const [product, setProduct] = useState([]);
   const [loading, setloading] = useState(false);
+  const navigate = useNavigate();
+  const { isSignedIn } = useAuth();
 
-  const dispatch = useDispatch();
-  const addProduct = (product) => {
-    dispatch(addCart(product));
-  };
+  const { addItem } = useContext(CartContext);
 
   useEffect(() => {
     const getproduct = async () => {
@@ -23,7 +22,15 @@ const Product = () => {
       setloading(false);
     };
     getproduct();
-  }, []);
+  }, [id]);
+
+  const handleAddToCart = (product) => {
+    if (isSignedIn) {
+      addItem(product);
+    } else {
+      navigate("/login");
+    }
+  };
 
   const Loading = () => {
     return (
@@ -66,7 +73,7 @@ const Product = () => {
           <p className="lead">{product.description}</p>
           <button
             className="btn btn-outline-dark px-4 py-2"
-            onClick={() => addProduct(product)}
+            onClick={() => handleAddToCart(product)}
           >
             Add to cart
           </button>

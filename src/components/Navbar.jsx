@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { CartContext } from "../context/CartContext";
+
+import { SignedIn, SignedOut, SignOutButton } from "@clerk/clerk-react";
 
 const Navbar = () => {
-  const state = useSelector((state) => state.handleCart);
+  const { cart } = useContext(CartContext);
   return (
     <div>
       <nav className="navbar navbar-expand-lg bg-white navbar-light py-3 shadow-sm">
@@ -45,16 +47,26 @@ const Navbar = () => {
                 </NavLink>
               </li>
             </ul>
-            <div className="buttons">
-              <NavLink to="/login" className="btn btn-outline-dark">
-                <i className="fa fa-sign-in me-1"></i> Login
-              </NavLink>
-              <NavLink to="/register" className="btn btn-outline-dark ms-2">
-                <i className="fa fa-user-plus me-1"></i> Register
-              </NavLink>
+            <div className="buttons d-flex align-items-center">
+              <SignedOut>
+                <NavLink to="/login" className="btn btn-outline-dark">
+                  <i className="fa fa-sign-in me-1"></i> Login
+                </NavLink>
+                <NavLink to="/register" className="btn btn-outline-dark ms-2">
+                  <i className="fa fa-user-plus me-1"></i> Register
+                </NavLink>
+              </SignedOut>
+              <SignedIn>
+                <div className="ms-2">
+                  <SignOutButton>
+                    <button className="btn btn-outline-dark">
+                      <i className="fa fa-sign-out me-1"></i> Logout
+                    </button>
+                  </SignOutButton>
+                </div>
+              </SignedIn>
               <NavLink to="/cart" className="btn btn-outline-dark ms-2">
-                <i className="fa fa-shopping-cart me-1"></i> Cart (
-                {state?.length ?? 0})
+                <i className="fa fa-shopping-cart me-1"></i> Cart ({cart.length})
               </NavLink>
             </div>
           </div>
