@@ -1,0 +1,129 @@
+import React, { useState, useEffect, useContext } from "react";
+import Skeleton from "react-loading-skeleton";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
+import { WishlistContext } from "../context/WishlistContext";
+import { useAuth } from "@clerk/clerk-react";
+import api from "../utils/api";
+
+const Product = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState({});
+  const [loading, setloading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { isSignedIn } = useAuth();
+
+  const { addItem } = useContext(CartContext);
+  const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `http://localhost:5001${imagePath}`;
+  };
+
+  useEffect(() => {
+    const getproduct = async () => {
+      setloading(true);
+      setError(null);
+      try {
+        const { data } = await api.get(`/products/${id}`);
+        setProduct({ ...data, id: data._id });
+        setloading(false);
+      } catch (err) {
+        setError(err.message || "Failed to fetch product");
+        setloading(false);
+      }
+    };
+    getproduct();
+  }, [id]);
+
+  const handleAddToCart = (product) => {
+    if (isSignedIn) {
+      addItem(product);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const Loading = () => {
+    return (
+      <>
+        <div className="col-md-6" style={{ lineHeight: 2 }}>
+          <Skeleton height={40} />
+        </div>
+        <div className="col-md-6">
+          <Skeleton height={50} width={300} />
+          <Skeleton height={75} />
+          <Skeleton height={25} width={150} />
+          <Skeleton height={50} />
+          <Skeleton height={150} />
+          <Skeleton height={50} width={100} />
+          <Skeleton height={50} width={100} style={{ marginLeft: 6 }} />
+        </div>
+      </>
+    );
+  };
+
+  const ShowProduct = () => {
+    return (
+      <>
+        <div className="col-md-6">
+          <img
+            src={getImageUrl(product.image)}
+            alt={product.title || product.name}
+            height="400px"
+            width="400px"
+          />
+        </div>
+        <div className="col-md-6">
+          <h4 className="text-uppercase text-black-50">{product.category}</h4>
+          <h1 className="display-5">{product.title || product.name || 'Untitled Product'}</h1>
+          <p className="lead fw-bolder">
+            Rating {product.rating && product.rating.rate}
+            <i className="fa fa-star"></i>
+          </p>
+          <h3 className="display-6 fw-bold my-4">$ {product.price}</h3>
+          <p className="lead">{product.description}</p>
+          <button
+            className="btn btn-outline-dark px-4 py-2"
+            onClick={() => handleAddToCart(product)}
+          >
+            Add to cart
+          </button>
+          <button
+            className={`btn ms-2 px-4 py-2 ${isInWishlist(product.id) ? 'btn-danger' : 'btn-outline-danger'}`}
+            onClick={() => {
+              if (isSignedIn) {
+                toggleWishlist(product);
+              } else {
+                navigate("/login");
+              }
+            }}
+          >
+            <i className={`fa ${isInWishlist(product.id) ? 'fa-heart' : 'fa-heart-o'} me-1`}></i>
+            {isInWishlist(product.id) ? 'Wishlisted' : 'Add to Wishlist'}
+          </button>
+          <NavLink to="/cart" className="btn btn-outline-dark ms-2 px-3 py-2">
+            Go to cart
+          </NavLink>
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div>
+      <div className="container py-5">
+        <div className="row py-4">
+          {loading ? <Loading /> : error ? <div className="text-center text-danger">{error}</div> : <ShowProduct />}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Product;
