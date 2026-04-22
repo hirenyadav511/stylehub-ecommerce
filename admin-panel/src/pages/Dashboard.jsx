@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { formatPrice } from '../utils/formatters';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ products: 0, orders: 0, revenue: 0 });
@@ -7,13 +8,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem('adminToken');
         const [prodRes, orderRes] = await Promise.all([
-          axios.get('/api/products'),
-          axios.get('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
+          api.get('/products'),
+          api.get('/orders')
         ]);
         
-        const productsCount = prodRes.data.length || 0;
+        const productsCount = (prodRes.data.products || prodRes.data).length || 0;
         const ordersList = orderRes.data.orders || [];
         const totalRev = ordersList.reduce((acc, curr) => acc + (curr.totalAmount || 0), 0);
 
@@ -42,7 +42,7 @@ const Dashboard = () => {
         
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-gray-500 text-sm font-semibold uppercase mb-2">Total Revenue</h3>
-          <p className="text-3xl font-bold text-gray-800">${stats.revenue.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-gray-800">{formatPrice(stats.revenue)}</p>
         </div>
       </div>
     </div>

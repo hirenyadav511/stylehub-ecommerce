@@ -18,6 +18,7 @@ import userRoutes from './routes/userRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js'; 
+import couponRoutes from './routes/couponRoutes.js';
 
 // Middleware Imports
 import { errorHandler, notFound } from './middlewares/errorMiddleware.js';
@@ -55,6 +56,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/coupons', couponRoutes);
 
 // Base Route
 app.get('/', (req, res) => {

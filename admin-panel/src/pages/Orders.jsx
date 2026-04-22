@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { formatPrice } from '../utils/formatters';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -8,10 +9,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem('adminToken');
-        const { data } = await axios.get('/api/orders', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const { data } = await api.get('/orders');
         setOrders(data.orders || []);
       } catch (error) {
         console.error('Error fetching orders', error);
@@ -24,10 +22,7 @@ const Orders = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      const token = localStorage.getItem('adminToken');
-      await axios.put(`/api/orders/${id}`, { status }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(`/orders/${id}`, { status });
       setOrders(orders.map(o => o._id === id ? { ...o, status } : o));
     } catch (error) {
       alert('Error updating order status');
@@ -54,7 +49,7 @@ const Orders = () => {
                   <p className="text-sm text-gray-500 mt-1">Payment: <span className="font-semibold">{order.paymentStatus}</span></p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-xl text-gray-800 mb-2">${order.totalAmount.toFixed(2)}</p>
+                  <p className="font-bold text-xl text-gray-800 mb-2">{formatPrice(order.totalAmount)}</p>
                   <div className="flex flex-col items-end gap-2">
                     <span className="text-xs text-gray-500 uppercase font-semibold">Change Status</span>
                     <select 
@@ -85,7 +80,7 @@ const Orders = () => {
                       <div>
                         <p className="font-semibold text-gray-800 text-sm">{item.productId ? item.productId.title : 'Unknown Product'}</p>
                         <p className="text-gray-600 text-sm mt-1">Qty: {item.quantity}</p>
-                        <p className="text-gray-800 font-bold text-sm mt-1">${item.productId ? item.productId.price : 0}</p>
+                        <p className="text-gray-800 font-bold text-sm mt-1">{formatPrice(item.productId ? item.productId.price : 0)}</p>
                       </div>
                     </div>
                   ))}

@@ -15,35 +15,39 @@ import Wishlist from './components/Wishlist';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminLogin from './admin/AdminLogin';
 import ProtectedAdminRoute from './admin/ProtectedAdminRoute';
+import Footer from './components/Footer';
 
 
 function App() {
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<Product />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login/*" element={<Login />} />
-        <Route path="/register/*" element={<Register />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/orders" element={<MyOrders />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route
-            path="/admin"
-            element={
-                <ProtectedAdminRoute>
-                    <AdminDashboard />
-                </ProtectedAdminRoute>
-            }
-        />
-        <Route path="/admin/login" element={<AdminLogin />} />
-      </Routes>
-    </>
+      <div className="flex-grow-1" style={{ paddingTop: '85px' }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<Product />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login/*" element={<Login />} />
+          <Route path="/register/*" element={<Register />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<MyOrders />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route
+              path="/admin"
+              element={
+                  <ProtectedAdminRoute>
+                      <AdminDashboard />
+                  </ProtectedAdminRoute>
+              }
+          />
+          <Route path="/admin/login" element={<AdminLogin />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
   );
 }
 

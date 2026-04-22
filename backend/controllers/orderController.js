@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
+import Coupon from '../models/Coupon.js';
 
 /**
  * @desc    Get all orders for administration
@@ -8,7 +9,7 @@ import Order from '../models/Order.js';
  */
 export const getAllOrders = asyncHandler(async (req, res) => {
     const orders = await Order.find({})
-        .populate('products.productId', 'title price image')
+        .populate('products.productId', 'name price images')
         .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -48,7 +49,7 @@ export const updateOrder = asyncHandler(async (req, res) => {
  * @name    placeOrder
  */
 export const placeOrder = asyncHandler(async (req, res) => {
-    const { orderItems, totalAmount, paymentStatus } = req.body;
+    const { orderItems, totalAmount, paymentStatus, couponCode, discountAmount } = req.body;
     const userId = req.auth.userId;
 
     if (orderItems && orderItems.length === 0) {
@@ -60,8 +61,18 @@ export const placeOrder = asyncHandler(async (req, res) => {
         userId,
         products: orderItems,
         totalAmount,
-        paymentStatus: paymentStatus || 'pending'
+        paymentStatus: paymentStatus || 'pending',
+        couponCode,
+        discountAmount: discountAmount || 0,
     });
+
+    // If coupon used, increment its count
+    if (couponCode) {
+        await Coupon.findOneAndUpdate(
+            { code: couponCode.toUpperCase() },
+            { $inc: { usedCount: 1 } }
+        );
+    }
 
     const createdOrder = await order.save();
     res.status(201).json(createdOrder);
@@ -71,7 +82,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
 export const getMyOrders = asyncHandler(async (req, res) => {
     const userId = req.auth ? req.auth.userId : req.query.userId;
     const orders = await Order.find({ userId })
-        .populate('products.productId', 'title image')
+        .populate('products.productId', 'name images')
         .sort({ createdAt: -1 });
     res.json(orders);
 });

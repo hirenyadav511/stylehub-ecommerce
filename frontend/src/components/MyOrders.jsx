@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import api, { setAuthToken } from "../utils/api";
 import Skeleton from "react-loading-skeleton";
+import { formatPrice } from "../utils/formatters";
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -65,16 +66,29 @@ const MyOrders = () => {
                           {order.products.map((item, idx) => (
                             <li key={idx} className="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 ps-0">
                                <span className="d-flex align-items-center gap-3">
-                                 {item.productId?.image && <img src={getImageUrl(item.productId.image)} width={40} height={40} className="object-cover rounded" alt="product" />}
-                                 {item.productId?.title || 'Unknown Product'}
+                                 {(item.image || item.productId?.image) && (
+                                   <img 
+                                     src={getImageUrl(item.image || item.productId?.image)} 
+                                     width={50} 
+                                     height={50} 
+                                     className="object-cover rounded shadow-sm" 
+                                     alt="product" 
+                                   />
+                                 )}
+                                 <div>
+                                   <div className="fw-bold">{item.name || item.productId?.title || 'Unknown Product'}</div>
+                                   {(item.size || item.color) && (
+                                     <small className="text-muted">{item.size} / {item.color}</small>
+                                   )}
+                                 </div>
                                </span>
-                               <span>Qty: {item.quantity} × ${item.price}</span>
+                               <span>{item.quantity} × {formatPrice(item.price)}</span>
                             </li>
                           ))}
                        </ul>
                     </div>
                     <div className="col-md-4 text-end">
-                       <h5>Total: ${order.totalAmount.toFixed(2)}</h5>
+                       <h5>Total: {formatPrice(order.totalAmount)}</h5>
                        <small className="text-muted">Placed on {new Date(order.createdAt).toLocaleDateString()}</small>
                     </div>
                   </div>

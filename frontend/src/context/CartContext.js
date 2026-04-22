@@ -23,21 +23,46 @@ const cartReducer = (state, action) => {
 
     case ADD_ITEM:
       const product = action.payload;
-      const exist = state.find((x) => x.id === product.id);
+      const exist = state.find(
+        (x) => 
+          x.id === product.id && 
+          x.size === product.selectedSize && 
+          x.color === product.selectedColor
+      );
+
       if (exist) {
         return state.map((x) =>
-          x.id === product.id ? { ...x, qty: x.qty + 1 } : x
+          (x.id === product.id && x.size === product.selectedSize && x.color === product.selectedColor)
+            ? { ...x, qty: x.qty + 1 } 
+            : x
         );
       } else {
-        return [...state, { ...product, qty: 1 }];
+        return [
+          ...state, 
+          { 
+            ...product, 
+            qty: 1, 
+            size: product.selectedSize, 
+            color: product.selectedColor 
+          }
+        ];
       }
 
     case DEL_ITEM:
-      return state.filter((x) => x.id !== action.payload.id);
+      return state.filter(
+        (x) => 
+          !(x.id === action.payload.id && 
+            x.size === action.payload.size && 
+            x.color === action.payload.color)
+      );
 
     case UPDATE_QTY:
       return state.map((x) =>
-        x.id === action.payload.id ? { ...x, qty: action.payload.qty } : x
+        (x.id === action.payload.id && 
+         x.size === action.payload.size && 
+         x.color === action.payload.color)
+          ? { ...x, qty: action.payload.qty } 
+          : x
       );
 
     default:
@@ -50,6 +75,9 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const [loading, setLoading] = useState(false);
+  const [discount, setDiscount] = useState(0);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
   const { getToken, isSignedIn } = useAuth();
 
   // Load backend cart on login
@@ -66,7 +94,9 @@ export const CartProvider = ({ children }) => {
           const mappedCart = data.products.map(item => ({
             ...item.productId,
             id: item.productId._id,
-            qty: item.quantity
+            qty: item.quantity,
+            size: item.size,
+            color: item.color
           }));
           
           dispatch({ type: SET_CART, payload: mappedCart });
@@ -78,6 +108,9 @@ export const CartProvider = ({ children }) => {
       } else {
         // If logged out, clear cart and localStorage
         dispatch({ type: CLEAR_CART });
+        setDiscount(0);
+        setCouponCode("");
+        setAppliedCoupon(null);
         localStorage.removeItem("cart");
       }
     };
@@ -89,13 +122,19 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(state));
   }, [state]);
 
-  const addItem = async (product) => {
-    dispatch({ type: ADD_ITEM, payload: product });
+  const addItem = async (product, selectedSize, selectedColor) => {
+    const payload = { ...product, selectedSize, selectedColor };
+    dispatch({ type: ADD_ITEM, payload });
     if (isSignedIn) {
       try {
         const token = await getToken();
         setAuthToken(token);
-        await api.post("/cart", { productId: product.id, quantity: 1 });
+        await api.post("/cart", { 
+          productId: product.id, 
+          quantity: 1,
+          size: selectedSize,
+          color: selectedColor
+        });
       } catch (error) {
         console.error("Error adding to cart on backend:", error);
       }
@@ -108,23 +147,55 @@ export const CartProvider = ({ children }) => {
       try {
         const token = await getToken();
         setAuthToken(token);
-        await api.delete(`/cart/${product.id}`);
+        await api.delete(`/cart/${product.id}`, {
+          params: { size: product.size, color: product.color }
+        });
       } catch (error) {
         console.error("Error removing from cart on backend:", error);
       }
     }
   };
 
-  const updateQty = (id, qty) => {
-    dispatch({ type: UPDATE_QTY, payload: { id, qty } });
+  const updateQty = (id, size, color, qty) => {
+    dispatch({ type: UPDATE_QTY, payload: { id, size, color, qty } });
+    // Note: Backend might need an explicit updateQty endpoint or use addToCart with relative diff
   };
 
   const clearCart = () => {
     dispatch({ type: CLEAR_CART });
+    setDiscount(0);
+    setCouponCode("");
+    setAppliedCoupon(null);
+  };
+
+  const applyCoupon = async (code, cartTotal) => {
+    if (!isSignedIn) throw new Error("Please login to apply coupon");
+    try {
+      const token = await getToken();
+      setAuthToken(token);
+      const { data } = await api.post("/coupons/apply", { code, cartTotal });
+      setDiscount(data.discount);
+      setCouponCode(data.code);
+      setAppliedCoupon(data);
+      return data;
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (
-    <CartContext.Provider value={{ cart: state, addItem, delItem, updateQty, clearCart, loading }}>
+    <CartContext.Provider value={{ 
+      cart: state, 
+      addItem, 
+      delItem, 
+      updateQty, 
+      clearCart, 
+      loading,
+      discount,
+      couponCode,
+      appliedCoupon,
+      applyCoupon
+    }}>
       {children}
     </CartContext.Provider>
   );

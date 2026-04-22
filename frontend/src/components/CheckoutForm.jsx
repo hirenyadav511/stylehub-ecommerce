@@ -3,8 +3,9 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useAuth } from "@clerk/clerk-react";
 import api, { setAuthToken } from "../utils/api";
 import { CartContext } from "../context/CartContext";
+import { formatPrice } from "../utils/formatters";
 
-const CheckoutForm = ({ total }) => {
+const CheckoutForm = ({ total, discountAmount, couponCode }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);
@@ -42,11 +43,17 @@ const CheckoutForm = ({ total }) => {
         const orderData = {
           orderItems: cart.map((item) => ({
             productId: item.id,
+            name: item.name || item.title,
+            image: item.images?.[0] || item.image,
+            size: item.size,
+            color: item.color,
             quantity: item.qty,
             price: item.price
           })),
           totalAmount: total,
-          paymentStatus: "paid"
+          paymentStatus: "paid",
+          couponCode: couponCode || null,
+          discountAmount: discountAmount || 0
         };
         
         await api.post("/orders/place", orderData);
@@ -55,7 +62,6 @@ const CheckoutForm = ({ total }) => {
         setError(null);
         setProcessing(false);
         setSucceeded(true);
-        console.log("[PaymentMethod]", paymentMethod);
       } catch (err) {
         setError(err.response?.data?.message || err.message || "Failed to place order");
         setProcessing(false);
@@ -64,8 +70,7 @@ const CheckoutForm = ({ total }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm bg-white">
-      <h3 className="mb-4">Payment Details</h3>
+    <form onSubmit={handleSubmit} className="p-4 border-0">
       <div className="mb-4">
         <label htmlFor="card-element" className="form-label">Credit or debit card</label>
         <div className="p-3 border rounded">
@@ -98,7 +103,7 @@ const CheckoutForm = ({ total }) => {
           disabled={!stripe || processing || succeeded}
           className="btn btn-dark w-100 py-2"
         >
-          {processing ? "Processing..." : `Pay $${total}`}
+          {processing ? "Processing..." : `Pay ${formatPrice(total)}`}
         </button>
       )}
     </form>

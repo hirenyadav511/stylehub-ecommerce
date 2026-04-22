@@ -8,35 +8,70 @@ import Product from '../models/Product.js';
  */
 const getProducts = asyncHandler(async (req, res) => {
     // Admin panel usually doesn't send pageNumber and expects an array.
-    // Frontend User app sends pageNumber and expects { products, page, pages }.
-    if (!req.query.pageNumber && !req.query.keyword && !req.query.category) {
+    if (!req.query.pageNumber && !req.query.keyword && !req.query.category && !req.query.brand && !req.query.gender && !req.query.size && !req.query.color) {
         const products = await Product.find({}).sort({ createdAt: -1 });
         return res.json(products);
     }
 
-    const pageSize = 8;
+    const pageSize = 12; // Increased for shop view
     const page = Number(req.query.pageNumber) || 1;
 
+    // Search by name or brand
     const keyword = req.query.keyword
         ? {
-            title: {
-                $regex: req.query.keyword,
-                $options: 'i',
-            },
+            $or: [
+                { name: { $regex: req.query.keyword, $options: 'i' } },
+                { brand: { $regex: req.query.keyword, $options: 'i' } }
+            ]
         }
         : {};
 
     const category = req.query.category ? { category: req.query.category } : {};
+    const brand = req.query.brand ? { brand: req.query.brand } : {};
+    const gender = req.query.gender ? { gender: req.query.gender } : {};
+    
+    // Variant-based filters
+    const size = req.query.size ? { "variants.size": req.query.size } : {};
+    const color = req.query.color ? { "variants.color": req.query.color } : {};
+
+    // Price range filter
+    const minPrice = Number(req.query.minPrice) || 0;
+    const maxPrice = Number(req.query.maxPrice) || Infinity;
+    const priceFilter = {
+        price: { $gte: minPrice, $lte: maxPrice === Infinity ? 1000000 : maxPrice }
+    };
+
+    // Rating filter
+    const ratingFilter = req.query.rating && Number(req.query.rating) > 0 
+        ? { rating: { $gte: Number(req.query.rating) } } 
+        : {};
+
+    // Stock filter (at least one variant in stock)
+    const inStock = req.query.inStock === 'true' ? { "variants.stock": { $gt: 0 } } : {};
+
+    const query = { 
+        ...keyword, 
+        ...category, 
+        ...brand,
+        ...gender,
+        ...size,
+        ...color,
+        ...priceFilter, 
+        ...ratingFilter, 
+        ...inStock 
+    };
 
     let sortOption = { createdAt: -1 };
     if (req.query.sort === 'priceLowHigh') {
         sortOption = { price: 1 };
     } else if (req.query.sort === 'priceHighLow') {
         sortOption = { price: -1 };
+    } else if (req.query.sort === 'rating') {
+        sortOption = { rating: -1 };
     }
 
-    const count = await Product.countDocuments({ ...keyword, ...category });
-    const products = await Product.find({ ...keyword, ...category })
+    const count = await Product.countDocuments(query);
+    const products = await Product.find(query)
         .sort(sortOption)
         .limit(pageSize)
         .skip(pageSize * (page - 1));
@@ -70,21 +105,43 @@ const getProductById = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 const createProduct = asyncHandler(async (req, res) => {
-    const { title, price, description, category, image, stock } = req.body;
+    const { name, title, price, description, category, images, image, brand, gender, material, variants } = req.body;
 
-    // Validation
-    if (!title || !price || !description || !category || !image || stock === undefined) {
+    const finalName = name || title;
+    const finalImages = images && images.length > 0 ? images : (image ? [image] : []);
+
+    // Core Validation
+    if (!finalName || !price || !category || finalImages.length === 0) {
         res.status(400);
-        throw new Error('Please provide all product details');
+        throw new Error('Please provide name, price, category and at least one image');
     }
 
+    // Clothing/Variant Validation
+    if (!variants || variants.length === 0) {
+        res.status(400);
+        throw new Error('Clothing products must have at least one variant (size, color, stock)');
+    }
+
+    // Validate variant consistency
+    variants.forEach(v => {
+        if (!v.size || !v.color || v.stock === undefined) {
+            res.status(400);
+            throw new Error('Each variant must have a size, color, and stock value');
+        }
+    });
+
     const product = new Product({
-        title,
+        name: finalName,
         price,
         description,
         category,
-        image,
-        stock,
+        images: finalImages,
+        image: finalImages[0], // Maintains compatibility with older frontend components
+        brand,
+        gender,
+        material,
+        variants,
+        stock: variants.reduce((acc, v) => acc + (v.stock || 0), 0) // Automatically calculate total stock
     });
 
     const createdProduct = await product.save();
@@ -101,17 +158,30 @@ const createProduct = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 const updateProduct = asyncHandler(async (req, res) => {
-    const { title, price, description, category, image, stock } = req.body;
+    const { name, title, price, description, category, image, images, stock, rating, brand, gender, material, variants } = req.body;
 
     const product = await Product.findById(req.params.id);
 
     if (product) {
-        product.title = title || product.title;
+        product.name = name || title || product.name;
         product.price = price || product.price;
         product.description = description || product.description;
         product.category = category || product.category;
-        product.image = image || product.image;
+        
+        if (images && images.length > 0) {
+            product.images = images;
+            product.image = images[0];
+        } else if (image) {
+            product.images = [image];
+            product.image = image;
+        }
+
         product.stock = stock !== undefined ? stock : product.stock;
+        product.rating = rating !== undefined ? rating : product.rating;
+        product.brand = brand || product.brand;
+        product.gender = gender || product.gender;
+        product.material = material || product.material;
+        product.variants = variants || product.variants;
 
         const updatedProduct = await product.save();
         res.json({
@@ -145,10 +215,61 @@ const deleteProduct = asyncHandler(async (req, res) => {
     }
 });
 
+/**
+ * @desc    Create new review or update existing one
+ * @route   POST /api/products/:id/review
+ * @access  Private
+ */
+const createProductReview = asyncHandler(async (req, res) => {
+    const { rating, comment, username, fit } = req.body;
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+        // Check if user already reviewed
+        const alreadyReviewed = product.reviews.find(
+            (r) => r.userId === req.auth.userId
+        );
+
+        if (alreadyReviewed) {
+            // Update existing review
+            alreadyReviewed.rating = Number(rating);
+            alreadyReviewed.comment = comment;
+            alreadyReviewed.username = username;
+            alreadyReviewed.fit = fit || alreadyReviewed.fit;
+        } else {
+            // Add new review
+            const review = {
+                username,
+                rating: Number(rating),
+                comment,
+                fit: fit || 'Perfect',
+                userId: req.auth.userId,
+            };
+            product.reviews.push(review);
+        }
+
+        // Recalculate Average Rating and numReviews
+        product.numReviews = product.reviews.length;
+        product.averageRating =
+            product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+            product.reviews.length;
+        
+        // Sync the main rating field with averageRating for filtering compatibility
+        product.rating = product.averageRating;
+
+        await product.save();
+        res.status(201).json({ message: 'Review added/updated successfuly' });
+    } else {
+        res.status(404);
+        throw new Error('Product not found');
+    }
+});
+
 export {
     getProducts,
     getProductById,
     createProduct,
     updateProduct,
     deleteProduct,
+    createProductReview,
 };

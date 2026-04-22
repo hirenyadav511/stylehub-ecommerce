@@ -9,7 +9,7 @@ const Navbar = () => {
   const { user } = useUser();
   return (
     <div>
-      <nav className="navbar navbar-expand-lg bg-white navbar-light py-3 shadow-sm">
+      <nav className="navbar navbar-expand-lg bg-white navbar-light py-3 shadow-sm fixed-top shadow-sm" style={{ zIndex: 1050 }}>
         <div className="container">
           <NavLink className="navbar-brand fw-bold fs-4" to="/">
             LA COLLECTION
@@ -62,20 +62,20 @@ const Navbar = () => {
                   <i className="fa fa-heart me-1"></i> Wishlist
                 </NavLink>
                 <NavLink to="/orders" className="btn btn-outline-dark ms-2">
-                   <i className="fa fa-list me-1"></i> My Orders
-                 </NavLink>
-                 {user?.publicMetadata?.role === 'admin' && (
-                    <NavLink to="/admin" className="btn btn-outline-dark ms-2">
-                       <i className="fa fa-cog me-1"></i> Admin
-                    </NavLink>
-                 )}
-                 <div className="ms-2">
-                   <SignOutButton>
-                     <button className="btn btn-outline-dark">
-                       <i className="fa fa-sign-out me-1"></i> Logout
-                     </button>
-                   </SignOutButton>
-                 </div>
+                  <i className="fa fa-list me-1"></i> My Orders
+                </NavLink>
+                {user?.publicMetadata?.role === 'admin' && (
+                  <NavLink to="/admin" className="btn btn-outline-dark ms-2">
+                    <i className="fa fa-cog me-1"></i> Admin
+                  </NavLink>
+                )}
+                <div className="ms-2">
+                  <SignOutButton>
+                    <button className="btn btn-outline-dark">
+                      <i className="fa fa-sign-out me-1"></i> Logout
+                    </button>
+                  </SignOutButton>
+                </div>
               </SignedIn>
               <NavLink to="/cart" className="btn btn-outline-dark ms-2 text-nowrap">
                 <i className="fa fa-shopping-cart me-1"></i> Cart ({cart.length})

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
@@ -8,10 +8,7 @@ const Customers = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const token = localStorage.getItem('adminToken');
-        const { data } = await axios.get('/api/admin/users', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const { data } = await api.get('/admin/users');
         setCustomers(data);
       } catch (error) {
         console.error('Error fetching customers', error);

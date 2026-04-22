@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Customers from './pages/Customers';
+import Coupons from './pages/Coupons';
 
 const ProtectedRoute = ({ children }) => {
   const isAuth = !!localStorage.getItem('adminToken');
@@ -36,6 +37,7 @@ const App = () => {
       <Route path="/products" element={<ProtectedRoute><AdminLayout><Products /></AdminLayout></ProtectedRoute>} />
       <Route path="/orders" element={<ProtectedRoute><AdminLayout><Orders /></AdminLayout></ProtectedRoute>} />
       <Route path="/customers" element={<ProtectedRoute><AdminLayout><Customers /></AdminLayout></ProtectedRoute>} />
+      <Route path="/coupons" element={<ProtectedRoute><AdminLayout><Coupons /></AdminLayout></ProtectedRoute>} />
       
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

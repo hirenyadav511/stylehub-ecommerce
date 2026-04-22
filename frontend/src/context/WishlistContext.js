@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import api, { setAuthToken } from "../utils/api";
 
@@ -9,7 +9,7 @@ export const WishlistProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const { getToken, isSignedIn } = useAuth();
 
-  const fetchWishlist = async () => {
+  const fetchWishlist = useCallback(async () => {
     if (isSignedIn) {
       setLoading(true);
       try {
@@ -27,11 +27,11 @@ export const WishlistProvider = ({ children }) => {
         setLoading(false);
       }
     }
-  };
+  }, [isSignedIn, getToken]);
 
   useEffect(() => {
     fetchWishlist();
-  }, [isSignedIn, getToken]);
+  }, [fetchWishlist]);
 
   const toggleWishlist = async (product) => {
     if (!isSignedIn) return;

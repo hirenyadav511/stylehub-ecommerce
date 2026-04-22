@@ -17,30 +17,40 @@ const getCart = asyncHandler(async (req, res) => {
     res.json(cart);
 });
 
-// @desc    Add or update item in cart (merge duplicates)
+// @desc    Add or update item in cart (merge duplicates by variant)
 // @route   POST /api/cart
 // @access  Private
 const addToCart = asyncHandler(async (req, res) => {
     const userId = req.auth.userId;
-    const { productId, quantity } = req.body;
+    const { productId, quantity, size, color } = req.body;
 
-    if (!productId || !quantity) {
+    if (!productId || !quantity || !size || !color) {
         res.status(400);
-        throw new Error('Please provide productId and quantity');
+        throw new Error('Please provide productId, quantity, size, and color');
     }
 
     let cart = await Cart.findOne({ userId });
+
+    const newProduct = { 
+        productId, 
+        quantity: Number(quantity), 
+        size, 
+        color 
+    };
 
     if (!cart) {
         // Create new cart if doesn't exist
         cart = await Cart.create({
             userId,
-            products: [{ productId, quantity: Number(quantity) }],
+            products: [newProduct],
         });
     } else {
-        // Check if product already exists in cart
+        // Check if specific variant already exists in cart
         const productIndex = cart.products.findIndex(
-            (item) => item.productId.toString() === productId
+            (item) => 
+                item.productId.toString() === productId && 
+                item.size === size && 
+                item.color === color
         );
 
         if (productIndex > -1) {
@@ -48,7 +58,7 @@ const addToCart = asyncHandler(async (req, res) => {
             cart.products[productIndex].quantity += Number(quantity);
         } else {
             // Add as new item
-            cart.products.push({ productId, quantity: Number(quantity) });
+            cart.products.push(newProduct);
         }
 
         await cart.save();
@@ -58,18 +68,22 @@ const addToCart = asyncHandler(async (req, res) => {
     res.status(200).json(updatedCart);
 });
 
-// @desc    Remove item from cart
+// @desc    Remove item from cart (by variant)
 // @route   DELETE /api/cart/:productId
 // @access  Private
 const removeFromCart = asyncHandler(async (req, res) => {
     const userId = req.auth.userId;
     const { productId } = req.params;
+    const { size, color } = req.query; // Use query params for identifying the variant
 
     let cart = await Cart.findOne({ userId });
 
     if (cart) {
         cart.products = cart.products.filter(
-            (item) => item.productId.toString() !== productId
+            (item) => 
+                !(item.productId.toString() === productId && 
+                  item.size === size && 
+                  item.color === color)
         );
         await cart.save();
 

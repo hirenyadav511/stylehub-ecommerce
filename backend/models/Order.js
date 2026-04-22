@@ -13,6 +13,10 @@ const orderSchema = mongoose.Schema(
                     ref: 'Product',
                     required: true,
                 },
+                name: { type: String, required: true },
+                image: { type: String, required: true },
+                size: { type: String, required: true },
+                color: { type: String, required: true },
                 quantity: {
                     type: Number,
                     required: true,
@@ -39,6 +43,14 @@ const orderSchema = mongoose.Schema(
             required: true,
             default: 'pending',
             enum: ['pending', 'paid', 'failed'],
+        },
+        couponCode: {
+            type: String,
+            uppercase: true,
+        },
+        discountAmount: {
+            type: Number,
+            default: 0.0,
         },
     },
     {

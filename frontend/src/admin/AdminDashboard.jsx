@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import adminApi from "../utils/adminApi";
 import Skeleton from "react-loading-skeleton";
+import { formatPrice } from "../utils/formatters";
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -73,10 +74,10 @@ const AdminDashboard = () => {
           </div>
         </div>
         <div className="col-md-4 mb-4">
-          <div className="card text-center p-3 bg-light border-0 shadow-sm">
-             <h3>${orders.reduce((acc, o) => acc + o.totalAmount, 0).toFixed(2)}</h3>
+           <div className="card text-center p-3 bg-light border-0 shadow-sm">
+             <h3>{formatPrice(orders.reduce((acc, o) => acc + o.totalAmount, 0))}</h3>
              <p className="lead mb-0">Total Revenue</p>
-          </div>
+           </div>
         </div>
       </div>
 
@@ -97,7 +98,7 @@ const AdminDashboard = () => {
               <tr key={order._id}>
                 <td>{order._id}</td>
                 <td>{order.userId}</td>
-                <td>${order.totalAmount.toFixed(2)}</td>
+                <td>{formatPrice(order.totalAmount)}</td>
                 <td>
                   <span className={`badge bg-${order.status === 'delivered' ? 'success' : order.status === 'shipped' ? 'info' : 'warning'}`}>
                     {order.status}

@@ -7,6 +7,7 @@ const Sidebar = () => {
     { name: 'Products', path: '/products' },
     { name: 'Orders', path: '/orders' },
     { name: 'Customers', path: '/customers' },
+    { name: 'Coupons', path: '/coupons' },
   ];
 
   const handleLogout = () => {
