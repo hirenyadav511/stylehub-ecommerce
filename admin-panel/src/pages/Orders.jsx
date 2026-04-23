@@ -22,11 +22,18 @@ const Orders = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await api.put(`/orders/${id}`, { status });
+      await api.put(`/orders/status/${id}`, { status });
       setOrders(orders.map(o => o._id === id ? { ...o, status } : o));
     } catch (error) {
       alert('Error updating order status');
     }
+  };
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `http://localhost:5001${imagePath}`;
   };
 
   return (
@@ -55,10 +62,12 @@ const Orders = () => {
                     <select 
                       value={order.status}
                       onChange={(e) => updateStatus(order._id, e.target.value)}
-                      className="border rounded p-1 text-sm bg-gray-50 outline-none"
+                      className="border rounded p-1 text-sm bg-gray-50 outline-none capitalize"
                     >
                       <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
                       <option value="shipped">Shipped</option>
+                      <option value="out for delivery">Out for Delivery</option>
                       <option value="delivered">Delivered</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
@@ -72,15 +81,21 @@ const Orders = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {order.products && order.products.map((item, index) => (
                     <div key={index} className="flex gap-4 p-3 bg-gray-50 rounded border border-gray-100">
-                      {item.productId && item.productId.image ? (
-                        <img src={item.productId.image} className="w-16 h-16 object-cover rounded" alt={item.productId.title} />
-                      ) : (
-                        <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No Image</div>
-                      )}
+                      <div className="w-16 h-16 flex-shrink-0">
+                        <img 
+                          src={getImageUrl(item.productId?.images?.[0] || item.image)} 
+                          className="w-16 h-16 object-cover rounded" 
+                          alt={item.name} 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/64?text=No+Img";
+                          }}
+                        />
+                      </div>
                       <div>
-                        <p className="font-semibold text-gray-800 text-sm">{item.productId ? item.productId.title : 'Unknown Product'}</p>
+                        <p className="font-semibold text-gray-800 text-sm">{item.name || (item.productId ? item.productId.name : 'Unknown Product')}</p>
                         <p className="text-gray-600 text-sm mt-1">Qty: {item.quantity}</p>
-                        <p className="text-gray-800 font-bold text-sm mt-1">{formatPrice(item.productId ? item.productId.price : 0)}</p>
+                        <p className="text-gray-800 font-bold text-sm mt-1">{formatPrice(item.price)}</p>
                       </div>
                     </div>
                   ))}

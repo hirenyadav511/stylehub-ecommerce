@@ -44,7 +44,7 @@ const Cart = () => {
   const cartItems = (item) => {
     return (
       <div className="py-4 border-bottom" key={`${item.id}-${item.size}-${item.color}`}>
-        <div className="row align-items-center">
+        <div className="row align-items-center g-3">
           <div className="col-4 col-md-2">
             <div className="bg-light overflow-hidden" style={{ height: '140px', borderRadius: '8px' }}>
               <img
@@ -83,7 +83,7 @@ const Cart = () => {
               </button>
             </div>
           </div>
-          <div className="col-md-5 text-md-end mt-3 mt-md-0">
+          <div className="col-12 col-md-5 text-md-end mt-3 mt-md-0">
              <div className="fw-bold">{formatPrice(item.qty * item.price)}</div>
              <small className="text-muted">{item.qty} x {formatPrice(item.price)}</small>
           </div>
@@ -108,7 +108,7 @@ const Cart = () => {
   const cartSummary = () => {
     return (
       <div className="row mt-5 pt-4">
-        <div className="col-md-6 mb-4 mb-md-0">
+        <div className="col-12 col-md-6 mb-4 mb-md-0">
           <h6 className="text-uppercase fw-bold mb-3 tracking-widest">PROMO CODE</h6>
           <form onSubmit={handleCouponSubmit} className="d-flex gap-0" style={{ maxWidth: '400px' }}>
             <input
@@ -132,7 +132,7 @@ const Cart = () => {
           {couponCode && <p className="text-success small mt-2 text-uppercase tracking-widest">Code Applied</p>}
         </div>
 
-        <div className="col-md-5 offset-md-1">
+        <div className="col-12 col-md-5 offset-md-1">
           <div className="p-4 bg-light">
             <div className="d-flex justify-content-between mb-3 small text-uppercase tracking-wider">
               <span>Subtotal</span>

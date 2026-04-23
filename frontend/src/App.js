@@ -16,11 +16,12 @@ import AdminDashboard from './admin/AdminDashboard';
 import AdminLogin from './admin/AdminLogin';
 import ProtectedAdminRoute from './admin/ProtectedAdminRoute';
 import Footer from './components/Footer';
-
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <div className="d-flex flex-column min-vh-100">
+      <ScrollToTop />
       <Navbar />
       <div className="flex-grow-1" style={{ paddingTop: '85px' }}>
         <Routes>

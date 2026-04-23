@@ -6,7 +6,6 @@ const OrderTracking = ({ status }) => {
     "Pending",
     "Confirmed",
     "Shipped",
-    "Out for Delivery",
     "Delivered",
   ];
 
@@ -15,8 +14,8 @@ const OrderTracking = ({ status }) => {
     "pending": 0,
     "confirmed": 1,
     "shipped": 2,
-    "out for delivery": 3,
-    "delivered": 4
+    "out for delivery": 2, // Map to Shipped visually if backend still has it
+    "delivered": 3
   };
 
   const currentStatus = status.toLowerCase();

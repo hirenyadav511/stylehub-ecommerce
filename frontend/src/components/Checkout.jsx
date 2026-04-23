@@ -182,7 +182,7 @@ const Checkout = () => {
     <div className="bg-white min-vh-100 py-5 section-padding border-top">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-lg-8">
+          <div className="col-12 col-lg-8">
             <StepIndicator currentStep={currentStep} />
             <div className="card border shadow-sm p-2">
               <div className="card-body p-md-5">

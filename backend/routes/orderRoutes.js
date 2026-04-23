@@ -4,6 +4,7 @@ import {
     getMyOrders,
     getAllOrders,
     updateOrder,
+    updateOrderStatus,
 } from '../controllers/orderController.js';
 import { verifyAdminToken } from '../middlewares/adminMiddleware.js';
 import { protect } from '../middlewares/authMiddleware.js';
@@ -16,6 +17,9 @@ router.route('/')
 
 router.route('/:id')
     .put(verifyAdminToken, updateOrder);
+
+router.route('/status/:id')
+    .put(verifyAdminToken, updateOrderStatus);
 
 // Customer Routes (Shared)
 router.post('/place', protect, placeOrder);

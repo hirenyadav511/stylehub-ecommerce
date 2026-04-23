@@ -48,7 +48,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
             </ul>
-            <div className="buttons d-flex align-items-center gap-2 ms-lg-3">
+            <div className="buttons d-flex flex-wrap align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
               <SignedOut>
                 <NavLink to="/login" className="btn btn-outline-dark">
                   <i className="fa fa-sign-in me-1"></i> Login

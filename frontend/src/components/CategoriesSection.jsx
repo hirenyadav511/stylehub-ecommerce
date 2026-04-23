@@ -1,31 +1,36 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import tshirtImg from "../assests/tshirt.jpg";
+import shirtImg from "../assests/shirt.jpg";
+import jeansImg from "../assests/jeans.jpg";
+import jacketImg from "../assests/jacket.jpg";
+
 const CategoriesSection = () => {
   const navigate = useNavigate();
 
-  const categories = [
-    {
-      title: "T-Shirts",
-      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1780&auto=format&fit=crop",
-      link: "/products"
-    },
-    {
-      title: "Shirts",
-      image: "https://images.unsplash.com/photo-1596755094514-f87034a3121d?q=80&w=1888&auto=format&fit=crop",
-      link: "/products"
-    },
-    {
-      title: "Jeans",
-      image: "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1926&auto=format&fit=crop",
-      link: "/products"
-    },
-    {
-      title: "Jackets",
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=1935&auto=format&fit=crop",
-      link: "/products"
-    }
-  ];
+const categories = [
+  {
+    title: "T-Shirts",
+    image: tshirtImg,
+    link: "/products"
+  },
+  {
+    title: "Shirts",
+    image: shirtImg,
+    link: "/products"
+  },
+  {
+    title: "Jeans",
+    image: jeansImg,
+    link: "/products"
+  },
+  {
+    title: "Jackets",
+    image: jacketImg,
+    link: "/products"
+  }
+];
 
   return (
     <section className="section-padding bg-white">
@@ -36,7 +41,7 @@ const CategoriesSection = () => {
         </div>
         <div className="row g-4">
           {categories.map((cat, index) => (
-            <div key={index} className="col-6 col-md-3">
+            <div key={index} className="col-12 col-sm-6 col-md-3">
               <div
                 className="category-card position-relative overflow-hidden cursor-pointer"
                 style={{ height: '320px', borderRadius: '8px' }}

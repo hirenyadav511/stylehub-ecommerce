@@ -223,7 +223,7 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                 {loading ? (
                     <div className="row g-4">
                         {[...Array(8)].map((_, i) => (
-                            <div key={i} className="col-6 col-md-4 col-lg-3"><Skeleton height={400} /></div>
+                            <div key={i} className="col-12 col-sm-6 col-md-4 col-lg-3"><Skeleton height={400} /></div>
                         ))}
                     </div>
                 ) : error ? (
@@ -236,7 +236,7 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                     <>
                         <div className="row g-4 px-2">
                             {data.map((product) => (
-                                <div key={product.id} className="col-6 col-md-4 col-lg-3">
+                                <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div className="card h-100 border-0 shadow-sm-hover">
                                         <NavLink to={`/products/${product.id}`} className="card-img-container d-block">
                                             <img

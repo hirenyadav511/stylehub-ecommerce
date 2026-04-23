@@ -45,6 +45,29 @@ export const updateOrder = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc    Update order status
+ * @route   PUT /api/orders/status/:id
+ * @access  Private/Admin
+ */
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.status = status;
+        const updatedOrder = await order.save();
+        res.json({
+            success: true,
+            order: updatedOrder,
+            message: `Order status updated to ${status}`
+        });
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
+/**
  * @desc    Place a new order (Used by customers)
  * @name    placeOrder
  */

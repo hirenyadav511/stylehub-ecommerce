@@ -23,7 +23,7 @@ const Contact = () => {
     <div className="bg-white min-vh-100 py-5 section-padding">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-lg-10">
+          <div className="col-12 col-lg-10">
             <div className="text-center mb-5 pb-5">
               <h6 className="text-muted text-uppercase tracking-widest mb-2">Get In Touch</h6>
               <h2 className="text-uppercase fw-bold display-4">Contact Us</h2>
@@ -32,7 +32,7 @@ const Contact = () => {
 
             <div className="row g-5">
               {/* Contact Info */}
-              <div className="col-md-5">
+              <div className="col-12 col-md-5">
                 <div className="pe-md-5">
                   <h4 className="text-uppercase fw-bold mb-4 tracking-tighter">Support & Inquiries</h4>
                   <p className="text-muted mb-5">We'd love to hear from you. Send us a message and we'll get back as soon as possible.</p>
@@ -55,7 +55,7 @@ const Contact = () => {
               </div>
 
               {/* Contact Form */}
-              <div className="col-md-7 border-start-md ps-md-5">
+              <div className="col-12 col-md-7 border-start-md ps-md-5">
                 {submitted ? (
                   <div className="p-4 bg-light border text-center text-uppercase tracking-widest">
                     <i className="fa fa-check me-2"></i> Message Sent Successfully

@@ -14,7 +14,7 @@ const About = () => {
 
         {/* Core Content Section */}
         <div className="row align-items-center mb-5 py-5 g-5">
-          <div className="col-md-6 order-md-2">
+          <div className="col-12 col-md-6 order-md-2">
              <div className="ps-md-5">
                 <h2 className="text-uppercase fw-bold mb-4 tracking-tighter">Empowering Your Wardrobe</h2>
                 <p className="text-muted mb-4 lead">
@@ -29,7 +29,7 @@ const About = () => {
                 <NavLink to="/products" className="btn btn-dark px-5">SHOP COLLECTION</NavLink>
              </div>
           </div>
-          <div className="col-md-6 order-md-1">
+          <div className="col-12 col-md-6 order-md-1">
              <div className="bg-light overflow-hidden" style={{ aspectRatio: '4/5' }}>
                 <img 
                   src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070&auto=format&fit=crop" 
@@ -48,7 +48,7 @@ const About = () => {
             { title: "Craft", text: "Meticulous attention to detail in every garment." },
             { title: "Ethos", text: "Ethical production and fair trade practices." }
           ].map((feature, index) => (
-            <div key={index} className="col-md-3">
+            <div key={index} className="col-12 col-sm-6 col-md-3">
               <div className="p-3">
                 <h6 className="text-uppercase tracking-widest fw-bold mb-3">{feature.title}</h6>
                 <p className="text-muted small mb-0">{feature.text}</p>
@@ -59,7 +59,7 @@ const About = () => {
 
         {/* Secondary Content Section */}
         <div className="row align-items-center mt-5 py-5 g-5 border-top">
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
              <div className="pe-md-5">
                 <h2 className="text-uppercase fw-bold mb-4 tracking-tighter">Sustainability First</h2>
                 <p className="text-muted mb-4">
@@ -70,7 +70,7 @@ const About = () => {
                 <p className="text-muted small text-uppercase tracking-widest">Read our 2026 impact report</p>
              </div>
           </div>
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
              <div className="bg-light overflow-hidden" style={{ aspectRatio: '16/9' }}>
                 <img 
                   src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1974&auto=format&fit=crop" 

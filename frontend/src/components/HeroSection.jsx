@@ -10,7 +10,7 @@ const HeroSection = () => {
 
       <div className="container py-5 position-relative">
         <div className="row justify-content-center text-center py-5">
-          <div className="col-lg-8">
+          <div className="col-11 col-md-10 col-lg-8">
             <h6 className="text-primary text-uppercase fw-bold ls-1 mb-3">Spring / Summer Collection 2026</h6>
             <h1 className="display-2 fw-bold mb-4 tracking-tight">LATEST FASHION COLLECTION</h1>
             <p className="lead text-white-50 mb-5 px-lg-5">
