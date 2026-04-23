@@ -1,13 +1,246 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #000000;
+  --bg-color: #ffffff;
+  --secondary-bg: #f5f5f5;
+  --text-primary: #333333;
+  --text-muted: #767676;
+  --border-color: #e0e0e0;
+  --border-radius-card: 8px;
+  --border-radius-btn: 6px;
+  --transition-base: all 0.3s ease;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+}
+
+h1 { font-size: 2.75rem; }
+h2 { font-size: 2.15rem; }
+
+p {
+  color: var(--text-muted);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-base);
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--bg-color) !important;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+  padding: 0.75rem 0 !important;
+  transition: var(--transition-base);
+}
+
+.navbar-brand {
+  font-weight: 800 !important;
+  font-size: 1.4rem !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.2rem !important;
+  color: var(--text-muted) !important;
+}
+
+.nav-link.active, .nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Buttons */
+.btn {
+  border-radius: var(--border-radius-btn) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.65rem 1.75rem !important;
+  transition: var(--transition-base) !important;
+  font-size: 0.8rem !important;
+}
+
+.btn-dark {
+  background-color: var(--primary-color) !important;
+  border: 1px solid var(--primary-color) !important;
+  color: #fff !important;
+}
+
+.btn-dark:hover {
+  background-color: #333 !important;
+  border-color: #333 !important;
+  transform: translateY(-1px);
+}
+
+.btn-outline-dark {
+  background-color: transparent !important;
+  border: 1px solid var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+.btn-outline-dark:hover {
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-card) !important;
+  overflow: hidden;
+  transition: var(--transition-base);
+  background: #fff !important;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.card-img-container {
+  overflow: hidden;
+  background-color: var(--secondary-bg);
+  aspect-ratio: 1/1.2;
+  border-radius: var(--border-radius-card) var(--border-radius-card) 0 0;
+}
+
+.card-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.card:hover .card-img-container img {
+  transform: scale(1.08);
+}
+
+.card-body {
+  padding: 1.25rem !important;
+}
+
+.card-title {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-price {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+/* Hero Text Adjustments */
+.hero .card-title {
+  font-size: 4rem !important;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.hero .card-text {
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  opacity: 0.95;
+}
+
+/* Forms */
+.form-control, .form-select {
+  border-radius: var(--border-radius-btn) !important;
+  border: 1px solid var(--border-color);
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  transition: var(--transition-base);
+}
+
+.form-control:focus, .form-select:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.05) !important;
+  border-color: var(--primary-color);
+}
+
+/* Spacing Utility */
+.section-padding {
+  padding: 60px 0;
+}
+
+.py-5 {
+  padding-top: 4rem !important;
+  padding-bottom: 4rem !important;
+}
+
+/* Image sizing helper */
+.product-detail-img {
+  max-height: 550px;
+  object-fit: contain;
+  border-radius: var(--border-radius-card);
+}
+
+/* Nav Icon Button Hover Effect */
+.nav-icon-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.nav-icon-btn .btn-text {
+  max-width: 0;
+  opacity: 0;
+  display: inline-block;
+  transition: all 0.3s ease;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nav-icon-btn:hover {
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+}
+
+.nav-icon-btn:hover .btn-text {
+  max-width: 100px;
+  opacity: 1;
+  margin-left: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 40px 0;
+  }
+  .hero .card-title {
+    font-size: 2.5rem !important;
+  }
 }

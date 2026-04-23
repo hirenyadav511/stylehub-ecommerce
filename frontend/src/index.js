@@ -12,6 +12,8 @@ import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { ClerkProvider } from "@clerk/clerk-react";
 
+import { NotificationProvider } from "./context/NotificationContext";
+
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -23,11 +25,13 @@ root.render(
   <BrowserRouter>
     <Provider store={store}>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-        <WishlistProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </WishlistProvider>
+        <NotificationProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </WishlistProvider>
+        </NotificationProvider>
       </ClerkProvider>
     </Provider>
   </BrowserRouter>

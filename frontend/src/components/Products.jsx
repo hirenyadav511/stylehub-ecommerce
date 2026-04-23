@@ -35,7 +35,7 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
     const { addItem } = useContext(CartContext);
     const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
     const navigate = useNavigate();
-    const { isSignedIn, getToken } = useAuth();
+    const { isSignedIn } = useAuth();
 
     useEffect(() => {
         let isMounted = true;
@@ -62,14 +62,6 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                 });
                 if (isMounted) {
                     let resProducts = Array.isArray(data) ? data : (data.products || []);
-                    
-                    // Client-side filtering for isFeatured if backend doesn't support it
-                    if (isFeatured) {
-                        // Assuming brand 'ZARA' or similar as featured if no featured flag exists, 
-                        // or just taking first few if we want "Trending"
-                        // In a real app, we'd check product.isFeatured
-                        // For now, let's just use it as a signal to limit or sort differently if needed
-                    }
 
                     if (limit) {
                         resProducts = resProducts.slice(0, limit);
@@ -96,19 +88,6 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
         return () => { isMounted = false; };
     }, [debouncedKeyword, category, brand, gender, size, color, minPrice, maxPrice, rating, inStock, sort, page, isFeatured, limit]);
 
-    const handleAddToCart = (product) => {
-        if (isSignedIn) {
-            // Check if product has variants and requires selection
-            if (product.variants?.length > 0) {
-                navigate(`/products/${product.id}`);
-            } else {
-                addItem(product);
-            }
-        } else {
-            navigate("/login");
-        }
-    };
-
     const getImageUrl = (imagePath) => {
         if (!imagePath) return "";
         return imagePath.startsWith("http")
@@ -131,172 +110,108 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
     };
 
     return (
-        <div className={`container ${!hideHeader ? 'my-5 py-5' : ''}`}>
+        <div className={`container ${!hideHeader ? 'py-5' : ''}`}>
             {!hideHeader && (
-                <div className="row">
-                    <div className="col-12 mb-5">
-                        <h1 className="display-6 fw-bolder text-center">Curated Fashion Collection</h1>
-                        <p className="text-center text-muted">Premium apparel designed for comfort and style.</p>
-                        <hr />
+                <div className="row section-padding pb-0">
+                    <div className="col-12 text-center mb-5">
+                        <h6 className="text-muted text-uppercase tracking-widest mb-2">Exclusive Selection</h6>
+                        <h2 className="text-uppercase fw-bold display-5">Our Collection</h2>
+                        <div className="mx-auto bg-dark" style={{ width: '60px', height: '2px' }}></div>
                     </div>
                 </div>
             )}
 
             {!hideHeader && (
-                <div className="row mb-4 align-items-center">
-                    <div className="col-md-6 mb-3 mb-md-0">
-                        <div className="input-group shadow-sm">
-                            <span className="input-group-text bg-white border-end-0">
-                                <i className="fa fa-search text-muted"></i>
-                            </span>
-                            <input
-                                type="text"
-                                className="form-control border-start-0 ps-0"
-                                placeholder="Search by product, brand or item name..."
-                                value={keyword}
-                                onChange={(e) => {
-                                    setKeyword(e.target.value);
-                                    setPage(1);
-                                }}
-                            />
-                            <button
-                                className={`btn ${showFilters ? 'btn-dark' : 'btn-outline-dark'}`}
-                                onClick={() => setShowFilters(!showFilters)}
-                            >
-                                <i className="fa fa-sliders me-2"></i>
-                                Filters
-                            </button>
+                <div className="row mb-5 g-4">
+                    {/* Category Tabs - Centered */}
+                    <div className="col-12 text-center mb-4">
+                        <div className="d-flex justify-content-center gap-2 flex-wrap">
+                            {['All', 'T-Shirts', 'Shirts', 'Jeans', 'Jackets'].map(cat => (
+                                <button
+                                    key={cat}
+                                    className={`btn btn-sm ${category === (cat === 'All' ? '' : cat) ? 'btn-dark' : 'btn-outline-dark'}`}
+                                    style={{ padding: '0.6rem 1.5rem', minWidth: '100px' }}
+                                    onClick={() => { setCategory(cat === 'All' ? '' : cat); setPage(1); }}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
                         </div>
                     </div>
-                    <div className="col-md-3 offset-md-3">
-                        <select
-                            className="form-select shadow-sm"
-                            value={sort}
-                            onChange={(e) => {
-                                setSort(e.target.value);
-                                setPage(1);
-                            }}
-                        >
-                            <option value="newest">Sort: Newest First</option>
-                            <option value="priceLowHigh">Price: Low to High</option>
-                            <option value="priceHighLow">Price: High to Low</option>
-                            <option value="rating">Best Rated</option>
-                        </select>
+
+                    {/* Search, Filter Toggle, and Sort - Balanced Row */}
+                    <div className="col-12">
+                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 py-3 border-top border-bottom">
+                            <div className="d-flex gap-2 align-items-center w-100" style={{ maxWidth: '450px' }}>
+                                <div className="input-group">
+                                    <span className="input-group-text bg-white border-end-0">
+                                        <i className="fa fa-search text-muted"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        className="form-control border-start-0 ps-0"
+                                        placeholder="SEARCH OUR COLLECTION..."
+                                        value={keyword}
+                                        onChange={(e) => {
+                                            setKeyword(e.target.value);
+                                            setPage(1);
+                                        }}
+                                    />
+                                </div>
+                                <button
+                                    className={`btn ${showFilters ? 'btn-dark' : 'btn-outline-dark'} text-nowrap`}
+                                    onClick={() => setShowFilters(!showFilters)}
+                                    style={{ padding: '0.65rem 1.25rem' }}
+                                >
+                                    <i className="fa fa-sliders me-2"></i>
+                                    FILTERS
+                                </button>
+                            </div>
+
+                            <div className="d-flex align-items-center gap-3">
+                                <span className="text-muted small text-uppercase tracking-widest d-none d-lg-block">Sort By:</span>
+                                <select
+                                    className="form-select border-0 bg-light w-auto"
+                                    style={{ cursor: 'pointer', paddingRight: '2.5rem' }}
+                                    value={sort}
+                                    onChange={(e) => {
+                                        setSort(e.target.value);
+                                        setPage(1);
+                                    }}
+                                >
+                                    <option value="newest">NEWEST FIRST</option>
+                                    <option value="priceLowHigh">PRICE: LOW TO HIGH</option>
+                                    <option value="priceHighLow">PRICE: HIGH TO LOW</option>
+                                    <option value="rating">BEST RATED</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
 
-
-            {/* Advanced Filters Panel */}
             {showFilters && (
-                <div className="row mb-5 animate__animated animate__fadeIn">
+                <div className="row mb-5">
                     <div className="col-12">
-                        <div className="card border-0 shadow-sm p-4 bg-light">
+                        <div className="p-4 bg-light">
                             <div className="row g-4">
-                                {/* Gender & Brand */}
                                 <div className="col-md-3">
-                                    <label className="form-label fw-bold small text-uppercase text-muted">Gender</label>
+                                    <label className="small fw-bold text-uppercase mb-2 d-block">Gender</label>
                                     <select className="form-select" value={gender} onChange={(e) => setGender(e.target.value)}>
-                                        <option value="">All Genders</option>
-                                        <option value="Men">Men</option>
-                                        <option value="Women">Women</option>
-                                        <option value="Unisex">Unisex</option>
+                                        <option value="">ALL GENDERS</option>
+                                        <option value="Men">MEN</option>
+                                        <option value="Women">WOMEN</option>
                                     </select>
                                 </div>
                                 <div className="col-md-3">
-                                    <label className="form-label fw-bold small text-uppercase text-muted">Brand</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Enter brand name"
-                                        value={brand}
-                                        onChange={(e) => setBrand(e.target.value)}
-                                    />
-                                </div>
-
-                                {/* Size & Color */}
-                                <div className="col-md-3">
-                                    <label className="form-label fw-bold small text-uppercase text-muted">Size</label>
-                                    <select className="form-select" value={size} onChange={(e) => setSize(e.target.value)}>
-                                        <option value="">Any Size</option>
-                                        <option value="S">S</option>
-                                        <option value="M">M</option>
-                                        <option value="L">L</option>
-                                        <option value="XL">XL</option>
-                                        <option value="XXL">XXL</option>
-                                    </select>
-                                </div>
-                                <div className="col-md-3">
-                                    <label className="form-label fw-bold small text-uppercase text-muted">Color</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="e.g. Red, Blue"
-                                        value={color}
-                                        onChange={(e) => setColor(e.target.value)}
-                                    />
-                                </div>
-
-                                {/* Price Range */}
-                                <div className="col-md-4">
-                                    <label className="form-label fw-bold small text-uppercase text-muted">Price Range (₹)</label>
-                                    <div className="input-group">
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            placeholder="Min"
-                                            value={minPrice}
-                                            onChange={(e) => setMinPrice(e.target.value)}
-                                        />
-                                        <span className="input-group-text bg-white border-0">to</span>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            placeholder="Max"
-                                            value={maxPrice}
-                                            onChange={(e) => setMaxPrice(e.target.value)}
-                                        />
+                                    <label className="small fw-bold text-uppercase mb-2 d-block">Price (₹)</label>
+                                    <div className="d-flex gap-2">
+                                        <input type="number" className="form-control" placeholder="MIN" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+                                        <input type="number" className="form-control" placeholder="MAX" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
                                     </div>
                                 </div>
-
-                                {/* Rating Filter */}
-                                <div className="col-md-3">
-                                    <label className="form-label fw-bold small text-uppercase text-muted">Min Rating</label>
-                                    <select
-                                        className="form-select"
-                                        value={rating}
-                                        onChange={(e) => setRating(Number(e.target.value))}
-                                    >
-                                        <option value="0">All Ratings</option>
-                                        <option value="4">4+ Stars</option>
-                                        <option value="3">3+ Stars</option>
-                                        <option value="2">2+ Stars</option>
-                                    </select>
-                                </div>
-
-                                {/* Stock Status */}
                                 <div className="col-md-3 d-flex align-items-end">
-                                    <div className="form-check form-switch mb-2">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="stockSwitch"
-                                            checked={inStock}
-                                            onChange={(e) => setInStock(e.target.checked)}
-                                        />
-                                        <label className="form-check-label fw-bold small text-uppercase text-muted" htmlFor="stockSwitch">In Stock Only</label>
-                                    </div>
-                                </div>
-
-                                {/* Reset Button */}
-                                <div className="col-md-2 d-flex align-items-end">
-                                    <button
-                                        className="btn btn-outline-secondary w-100"
-                                        onClick={resetFilters}
-                                    >
-                                        Clear All
-                                    </button>
+                                    <button className="btn btn-dark w-100" onClick={resetFilters}>RESET ALL</button>
                                 </div>
                             </div>
                         </div>
@@ -304,25 +219,11 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                 </div>
             )}
 
-            {!hideHeader && (
-                <div className="buttons d-flex justify-content-center mb-5 flex-wrap gap-2">
-                    {['All', 'T-Shirts', 'Shirts', 'Jeans', 'Hoodies', 'Jackets'].map(cat => (
-                        <button
-                            key={cat}
-                            className={`btn rounded-pill px-4 ${category === (cat === 'All' ? '' : cat) ? 'btn-dark' : 'btn-outline-dark'}`}
-                            onClick={() => { setCategory(cat === 'All' ? '' : cat); setPage(1); }}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            )}
-
             <div className="row justify-content-center">
                 {loading ? (
-                    <div className="row">
-                        {[...Array(4)].map((_, i) => (
-                            <div key={i} className="col-md-3 mb-4"><Skeleton height={400} borderRadius={15} /></div>
+                    <div className="row g-4">
+                        {[...Array(8)].map((_, i) => (
+                            <div key={i} className="col-6 col-md-4 col-lg-3"><Skeleton height={400} /></div>
                         ))}
                     </div>
                 ) : error ? (
@@ -333,44 +234,54 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                     </div>
                 ) : (
                     <>
-                        <div className="row">
+                        <div className="row g-4 px-2">
                             {data.map((product) => (
-                                <div key={product.id} className="col-md-3 mb-4">
-                                    <div className="card h-100 text-center p-3 border-0 shadow-sm rounded-4 hover-lift transition">
-                                        <div className="card-img-container bg-light rounded-4 overflow-hidden mb-3">
+                                <div key={product.id} className="col-6 col-md-4 col-lg-3">
+                                    <div className="card h-100 border-0 shadow-sm-hover">
+                                        <NavLink to={`/products/${product.id}`} className="card-img-container d-block">
                                             <img
                                                 src={getImageUrl(product.images?.[0] || product.image)}
-                                                className="card-img-top w-100"
                                                 alt={product.name}
-                                                style={{ height: "280px", objectFit: "contain" }}
+                                                className="img-fluid"
                                             />
-                                        </div>
-                                        <div className="card-body p-2 d-flex flex-column">
-                                            <div className="small text-muted text-uppercase mb-1">{product.brand}</div>
-                                            <h5 className="card-title fw-bold mb-3">{(product.name || product.title || '').substring(0, 18)}...</h5>
-                                            <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                <span className="fs-5 fw-bolder text-primary">{formatPrice(product.price)}</span>
-                                                <div className="d-flex gap-1">
-                                                    <NavLink to={`/products/${product.id}`} className="btn btn-dark btn-sm rounded-3 shadow-sm">
-                                                        <i className="fa fa-eye"></i>
-                                                    </NavLink>
-                                                    <button className={`btn btn-sm rounded-3 shadow-sm ${isInWishlist(product.id) ? 'btn-danger' : 'btn-outline-danger'}`} onClick={() => isSignedIn ? toggleWishlist(product) : navigate("/login")}>
-                                                        <i className={`fa ${isInWishlist(product.id) ? 'fa-heart' : 'fa-heart-o'}`}></i>
-                                                    </button>
+                                        </NavLink>
+                                        <div className="card-body p-3">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <div className="overflow-hidden">
+                                                    <small className="text-muted text-uppercase fw-bold tracking-tighter d-block mb-1" style={{ fontSize: '0.65rem' }}>{product.brand}</small>
+                                                    <h6 className="card-title text-uppercase mb-1" style={{ fontSize: '0.85rem' }}>
+                                                        <NavLink to={`/products/${product.id}`} className="text-dark">{(product.name || product.title || '').substring(0, 18)}</NavLink>
+                                                    </h6>
+                                                    <div className="card-price text-dark">{formatPrice(product.price)}</div>
                                                 </div>
+                                                <button 
+                                                    className="btn p-1 border-0 bg-transparent" 
+                                                    onClick={() => isSignedIn ? toggleWishlist(product) : navigate("/login")}
+                                                >
+                                                    <i className={`fa ${isInWishlist(product.id) ? 'fa-heart text-danger' : 'fa-heart-o text-muted'}`} style={{ fontSize: '1.1rem' }}></i>
+                                                </button>
                                             </div>
+                                            <NavLink to={`/products/${product.id}`} className="btn btn-outline-dark btn-sm w-100 py-2 mt-2" style={{ fontSize: '0.7rem' }}>
+                                                VIEW DETAILS
+                                            </NavLink>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {pages > 1 && (
+                        {pages > 1 && !limit && (
                             <nav className="d-flex justify-content-center mt-5">
                                 <ul className="pagination">
                                     {[...Array(pages).keys()].map((p) => (
                                         <li key={p + 1} className={`page-item ${p + 1 === page ? 'active' : ''}`}>
-                                            <button className="page-link" onClick={() => setPage(p + 1)}>{p + 1}</button>
+                                            <button 
+                                                className="page-link border-dark text-dark rounded-0 px-3 py-2" 
+                                                style={{ backgroundColor: p + 1 === page ? '#000' : '#fff', color: p + 1 === page ? '#fff' : '#000' }}
+                                                onClick={() => setPage(p + 1)}
+                                            >
+                                                {p + 1}
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>

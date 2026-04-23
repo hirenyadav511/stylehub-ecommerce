@@ -14,39 +14,38 @@ const Newsletter = () => {
     };
 
     return (
-        <div className="bg-light py-5">
-            <div className="container py-4">
+        <section className="section-padding bg-light border-top">
+            <div className="container">
                 <div className="row justify-content-center">
-                    <div className="col-lg-7 text-center">
-                        <div className="bg-white p-5 rounded-4 shadow-sm border border-secondary border-opacity-10">
-                            <i className="fa fa-paper-plane text-primary fs-1 mb-4"></i>
-                            <h2 className="fw-bold mb-3">Join Our Newsletter</h2>
-                            <p className="text-muted mb-4 px-md-5">Subscribe to receive updates, access to exclusive deals, and more.</p>
-                            
-                            {status === "success" ? (
-                                <div className="alert alert-success border-0 bg-success bg-opacity-10 text-success p-3 rounded-3" role="alert">
-                                    <i className="fa fa-check-circle me-2"></i> Perfect! You've been subscribed.
-                                </div>
-                            ) : (
-                                <form onSubmit={handleSubscribe} className="d-flex gap-2">
-                                    <input 
-                                        type="email" 
-                                        className="form-control form-control-lg rounded-pill px-4 border-0 bg-light" 
-                                        placeholder="Enter your email address" 
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required 
-                                    />
-                                    <button type="submit" className="btn btn-dark btn-lg px-4 rounded-pill fw-bold text-white">
-                                        Subscribe
-                                    </button>
-                                </form>
-                            )}
-                        </div>
+                    <div className="col-lg-6 text-center">
+                        <h6 className="text-uppercase tracking-widest mb-3">Stay Connected</h6>
+                        <h2 className="text-uppercase mb-4 fw-bold">Join Our Newsletter</h2>
+                        <p className="text-muted mb-5">Subscribe to receive updates, access to exclusive deals, and more.</p>
+                        
+                        {status === "success" ? (
+                            <div className="p-4 bg-white border border-dark text-dark text-uppercase tracking-widest" role="alert">
+                                <i className="fa fa-check me-2"></i> Thank you for subscribing
+                            </div>
+                        ) : (
+                            <form onSubmit={handleSubscribe} className="d-flex flex-column flex-md-row gap-0">
+                                <input 
+                                    type="email" 
+                                    className="form-control px-4 flex-grow-1" 
+                                    placeholder="ENTER YOUR EMAIL" 
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required 
+                                    style={{ height: '60px', borderRight: 'none' }}
+                                />
+                                <button type="submit" className="btn btn-dark px-5" style={{ height: '60px' }}>
+                                    SUBSCRIBE
+                                </button>
+                            </form>
+                        )}
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 

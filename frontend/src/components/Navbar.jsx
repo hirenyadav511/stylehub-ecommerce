@@ -9,7 +9,7 @@ const Navbar = () => {
   const { user } = useUser();
   return (
     <div>
-      <nav className="navbar navbar-expand-lg bg-white navbar-light py-3 shadow-sm fixed-top shadow-sm" style={{ zIndex: 1050 }}>
+      <nav className="navbar navbar-expand-lg fixed-top" style={{ zIndex: 1050 }}>
         <div className="container">
           <NavLink className="navbar-brand fw-bold fs-4" to="/">
             LA COLLECTION
@@ -28,7 +28,7 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <NavLink className="nav-link active" aria-current="page" to="/">
+                <NavLink className="nav-link" aria-current="page" to="/">
                   Home
                 </NavLink>
               </li>
@@ -48,40 +48,45 @@ const Navbar = () => {
                 </NavLink>
               </li>
             </ul>
-            <div className="buttons d-flex align-items-center">
+            <div className="buttons d-flex align-items-center gap-2 ms-lg-3">
               <SignedOut>
                 <NavLink to="/login" className="btn btn-outline-dark">
                   <i className="fa fa-sign-in me-1"></i> Login
                 </NavLink>
-                <NavLink to="/register" className="btn btn-outline-dark ms-2">
+                <NavLink to="/register" className="btn btn-dark">
                   <i className="fa fa-user-plus me-1"></i> Register
                 </NavLink>
               </SignedOut>
               <SignedIn>
-                <NavLink to="/wishlist" className="btn btn-outline-dark ms-2">
-                  <i className="fa fa-heart me-1"></i> Wishlist
+                <NavLink to="/wishlist" className="btn btn-outline-dark p-2 nav-icon-btn" title="Wishlist">
+                  <i className="fa fa-heart"></i>
+                  <span className="btn-text">Wishlist</span>
                 </NavLink>
-                <NavLink to="/orders" className="btn btn-outline-dark ms-2">
-                  <i className="fa fa-list me-1"></i> My Orders
+                <NavLink to="/orders" className="btn btn-outline-dark p-2 nav-icon-btn" title="My Orders">
+                  <i className="fa fa-list"></i>
+                  <span className="btn-text">Orders</span>
                 </NavLink>
                 {user?.publicMetadata?.role === 'admin' && (
-                  <NavLink to="/admin" className="btn btn-outline-dark ms-2">
-                    <i className="fa fa-cog me-1"></i> Admin
+                  <NavLink to="/admin" className="btn btn-outline-dark p-2 nav-icon-btn" title="Admin">
+                    <i className="fa fa-cog"></i>
+                    <span className="btn-text">Admin</span>
                   </NavLink>
                 )}
-                <div className="ms-2">
+                <div className="ms-1">
                   <SignOutButton>
-                    <button className="btn btn-outline-dark">
-                      <i className="fa fa-sign-out me-1"></i> Logout
+                    <button className="btn btn-outline-dark p-2 nav-icon-btn" title="Logout">
+                      <i className="fa fa-sign-out"></i>
+                      <span className="btn-text">Logout</span>
                     </button>
                   </SignOutButton>
                 </div>
               </SignedIn>
-              <NavLink to="/cart" className="btn btn-outline-dark ms-2 text-nowrap">
-                <i className="fa fa-shopping-cart me-1"></i> Cart ({cart.length})
+              <NavLink to="/cart" className="btn btn-dark ms-1 nav-icon-btn">
+                <i className="fa fa-shopping-cart me-1"></i> 
+                <span className="btn-text">Cart</span> ({cart.length})
               </NavLink>
               <SignedIn>
-                <div className="ms-3">
+                <div className="ms-2">
                   <UserButton afterSignOutUrl="/" />
                 </div>
               </SignedIn>

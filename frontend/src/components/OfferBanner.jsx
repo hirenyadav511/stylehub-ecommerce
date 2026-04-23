@@ -3,15 +3,16 @@ import { NavLink } from "react-router-dom";
 
 const OfferBanner = () => {
   return (
-    <div className="bg-primary py-5 mb-0 shadow-inner">
-      <div className="container text-center text-white py-2">
-        <h2 className="fw-bold mb-3 ls-1 text-white">🔥 FLAT 20% OFF ON NEW COLLECTION</h2>
-        <p className="lead mb-4 opacity-75 text-white">Upgrade your wardrobe with our premium essentials and seasonal favorites.</p>
-        <NavLink to="/products" className="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm transition hover-lift">
-            SHOP NOW <i className="fa fa-arrow-right ms-2 small"></i>
+    <section className="bg-dark py-5">
+      <div className="container text-center py-4">
+        <h6 className="text-white-50 text-uppercase tracking-widest mb-3">Limited Time Offer</h6>
+        <h2 className="display-4 text-white fw-bold mb-4 tracking-tighter">FLAT 20% OFF ON NEW COLLECTION</h2>
+        <p className="text-white-50 mb-5 text-uppercase tracking-wider">Use Code: FASHION20 at checkout</p>
+        <NavLink to="/products" className="btn btn-outline-light btn-lg px-5 py-3">
+            SHOP THE COLLECTION
         </NavLink>
       </div>
-    </div>
+    </section>
   );
 };
 

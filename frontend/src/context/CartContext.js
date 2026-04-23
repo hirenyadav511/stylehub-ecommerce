@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import api, { setAuthToken } from "../utils/api";
+import { useNotification } from "./NotificationContext";
 
 // Initial state
 const initialState = JSON.parse(localStorage.getItem("cart")) || [];
@@ -79,6 +80,7 @@ export const CartProvider = ({ children }) => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const { getToken, isSignedIn } = useAuth();
+  const { showToast } = useNotification();
 
   // Load backend cart on login
   useEffect(() => {
@@ -125,6 +127,7 @@ export const CartProvider = ({ children }) => {
   const addItem = async (product, selectedSize, selectedColor) => {
     const payload = { ...product, selectedSize, selectedColor };
     dispatch({ type: ADD_ITEM, payload });
+    showToast("Product added to cart successfully");
     if (isSignedIn) {
       try {
         const token = await getToken();

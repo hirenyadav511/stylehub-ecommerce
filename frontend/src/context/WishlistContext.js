@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import api, { setAuthToken } from "../utils/api";
+import { useNotification } from "./NotificationContext";
 
 export const WishlistContext = createContext();
 
@@ -8,6 +9,7 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(false);
   const { getToken, isSignedIn } = useAuth();
+  const { showToast } = useNotification();
 
   const fetchWishlist = useCallback(async () => {
     if (isSignedIn) {
@@ -45,6 +47,7 @@ export const WishlistProvider = ({ children }) => {
         if (exists) {
             return prev.filter(item => item.id !== product.id);
         } else {
+            showToast("Added to wishlist");
             return [...prev, product];
         }
       });

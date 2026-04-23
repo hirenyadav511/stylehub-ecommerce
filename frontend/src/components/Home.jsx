@@ -9,7 +9,7 @@ import Newsletter from "./Newsletter";
 const Home = () => {
   return (
     <div className="home-container">
-      {/* Existing Hero Section (Unchanged) */}
+      {/* Existing Hero Section (Unchanged per instructions) */}
       <div className="hero">
         <div className="card bg-dark text-white border-0 rounded-0">
           <img
@@ -20,47 +20,45 @@ const Home = () => {
             style={{ objectFit: 'cover' }}
           />
           <div className="card-img-overlay d-flex flex-column justify-content-center">
-            <div className="container">
-              <h5 className="card-title display-3 fw-bolder md-0">
-                NEW SEASOM ARRIVALS
-              </h5>
-              <p className="card-text lead fs-2">CHECK OUT ALL THE TRENDS</p>
+            <div className="container text-start">
+              <h1 className="card-title display-2 fw-bold mb-2">
+                NEW SEASON ARRIVALS
+              </h1>
+              <p className="card-text lead fs-4 fw-normal text-uppercase tracking-wider">Check out all the latest trends</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* New Sections Below Hero */}
-      <div className="bg-light py-5">
-         <CategoriesSection />
-      </div>
+      <WhyChooseUs />
 
-      <section className="py-5 bg-white">
-        <div className="text-center mt-4">
-           <h2 className="fw-bold h1">Trending Now</h2>
-           <p className="text-muted">Hand-picked seasonal favorites for your wardrobe.</p>
+      <CategoriesSection />
+
+      <section className="section-padding bg-white border-top">
+        <div className="container">
+          <div className="text-center mb-5">
+            <h6 className="text-muted text-uppercase tracking-widest mb-2">Editor's Choice</h6>
+            <h2 className="text-uppercase fw-bold display-5">Trending Now</h2>
+            <div className="mx-auto bg-dark" style={{ width: '40px', height: '2px' }}></div>
+          </div>
+          <Products isFeatured={true} limit={4} hideHeader={true} />
         </div>
-        <Products isFeatured={true} limit={6} hideHeader={true} />
       </section>
 
       <OfferBanner />
 
-      <div className="bg-light py-5">
-         <WhyChooseUs />
-      </div>
+      <section className="section-padding bg-white border-top border-bottom">
+        <div className="container">
+          <div className="text-center mb-5">
+            <h6 className="text-muted text-uppercase tracking-widest mb-2">Our Essentials</h6>
+            <h2 className="text-uppercase fw-bold display-5">Full Collection</h2>
+            <div className="mx-auto bg-dark" style={{ width: '40px', height: '2px' }}></div>
+          </div>
+          <Products limit={8} hideHeader={true} />
+        </div>
+      </section>
 
       <SecondaryBanner />
-
-      <section className="py-5 bg-white">
-        <div className="container mt-5">
-           <hr className="mb-5 opacity-10" />
-           <div className="text-center mb-5">
-              <h2 className="fw-bold h1">Our Full Collection</h2>
-              <p className="text-muted">Everything you need to complete your look.</p>
-           </div>
-        </div>
-        <Products />
-      </section>
 
       <Newsletter />
     </div>

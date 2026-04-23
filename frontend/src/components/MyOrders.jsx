@@ -3,11 +3,13 @@ import { useAuth } from "@clerk/clerk-react";
 import api, { setAuthToken } from "../utils/api";
 import Skeleton from "react-loading-skeleton";
 import { formatPrice } from "../utils/formatters";
+import OrderTracking from "./OrderTracking";
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeTrackingId, setActiveTrackingId] = useState(null);
   const { getToken, isSignedIn } = useAuth();
 
   const getImageUrl = (imagePath) => {
@@ -87,11 +89,27 @@ const MyOrders = () => {
                           ))}
                        </ul>
                     </div>
-                    <div className="col-md-4 text-end">
-                       <h5>Total: {formatPrice(order.totalAmount)}</h5>
-                       <small className="text-muted">Placed on {new Date(order.createdAt).toLocaleDateString()}</small>
+                    <div className="col-md-4 text-end d-flex flex-column justify-content-between">
+                       <div>
+                         <h5>Total: {formatPrice(order.totalAmount)}</h5>
+                         <small className="text-muted">Placed on {new Date(order.createdAt).toLocaleDateString()}</small>
+                       </div>
+                       <div className="mt-3">
+                         <button 
+                           className={`btn btn-sm ${activeTrackingId === order._id ? 'btn-secondary' : 'btn-outline-primary'}`}
+                           onClick={() => setActiveTrackingId(activeTrackingId === order._id ? null : order._id)}
+                         >
+                           {activeTrackingId === order._id ? "Hide Tracking" : "Track Order"}
+                         </button>
+                       </div>
                     </div>
                   </div>
+                  {activeTrackingId === order._id && (
+                    <div className="mt-4 pt-4 border-top">
+                      <h6 className="fw-bold mb-3">Order Status Tracking</h6>
+                      <OrderTracking status={order.status} />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
