@@ -19,7 +19,7 @@ const Products = ({ limit = null }) => {
     const [sort, setSort] = useState("newest");
     const [page, setPage] = useState(1);
 
-    const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+    const { toggleWishlist } = useContext(WishlistContext);
     const navigate = useNavigate();
     const { isSignedIn } = useAuth();
 
