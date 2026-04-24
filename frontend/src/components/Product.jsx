@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -272,7 +272,7 @@ const ShowProduct = ({
 const Product = () => {
   const { id } = useParams();
   const [product, setProduct] = useState({});
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { isSignedIn, getToken } = useAuth();
@@ -293,15 +293,15 @@ const Product = () => {
   const { addItem } = useContext(CartContext);
   const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
 
-  const getImageUrl = (imagePath) => {
+  const getImageUrl = useCallback((imagePath) => {
     if (!imagePath) return "";
     return imagePath.startsWith("http")
       ? imagePath
       : `http://localhost:5001${imagePath}`;
-  };
+  }, []);
 
-  const getproduct = async () => {
-    setloading(true);
+  const getproduct = useCallback(async () => {
+    setLoading(true);
     setError(null);
     try {
       const { data } = await api.get(`/products/${id}`);
@@ -311,23 +311,23 @@ const Product = () => {
         setSelectedColor(data.variants[0].color);
       }
       setActiveImage(data.images?.[0] || data.image);
-      setloading(false);
+      setLoading(false);
     } catch (err) {
       setError(err.message || "Failed to fetch product");
-      setloading(false);
+      setLoading(false);
     }
-  };
+  }, [id]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const { data } = await api.get(`/reviews/${id}`);
       setReviews(data);
     } catch (err) {
       console.error("Error fetching reviews:", err);
     }
-  };
+  }, [id]);
 
-  const checkEligibility = async () => {
+  const checkEligibility = useCallback(async () => {
     if (isSignedIn) {
       try {
         const token = await getToken();
@@ -338,14 +338,13 @@ const Product = () => {
         console.error("Error checking review eligibility:", err);
       }
     }
-  };
+  }, [id, isSignedIn, getToken]);
 
   useEffect(() => {
     getproduct();
     fetchReviews();
     checkEligibility();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, isSignedIn]);
+  }, [getproduct, fetchReviews, checkEligibility]);
 
   const handleAddToCart = (product) => {
     if (isSignedIn) {
