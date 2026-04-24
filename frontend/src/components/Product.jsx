@@ -22,14 +22,14 @@ const Loading = () => (
   </div>
 );
 
-const ShowProduct = ({ 
-  product, 
-  reviews, 
-  canReview, 
-  reviewData, 
-  handleReviewChange, 
-  handleReviewSubmit, 
-  reviewLoading, 
+const ShowProduct = ({
+  product,
+  reviews,
+  canReview,
+  reviewData,
+  handleReviewChange,
+  handleReviewSubmit,
+  reviewLoading,
   setReviewData,
   selectedSize,
   setSelectedSize,
@@ -196,8 +196,8 @@ const ShowProduct = ({
                     <label className="small text-uppercase tracking-widest mb-2 d-block">Your Rating</label>
                     <div className="d-flex gap-2">
                       {[1, 2, 3, 4, 5].map(star => (
-                        <i 
-                          key={star} 
+                        <i
+                          key={star}
                           className={`fa ${star <= reviewData.rating ? 'fa-star' : 'fa-star-o'} cursor-pointer fs-5`}
                           onClick={() => setReviewData(prev => ({ ...prev, rating: star }))}
                         ></i>
@@ -206,9 +206,9 @@ const ShowProduct = ({
                   </div>
                   <div className="mb-4">
                     <label className="small text-uppercase tracking-widest mb-2 d-block">Your Comment</label>
-                    <textarea 
-                      className="form-control" 
-                      rows="4" 
+                    <textarea
+                      className="form-control"
+                      rows="4"
                       name="comment"
                       placeholder="SHARE YOUR EXPERIENCE..."
                       value={reviewData.comment}
@@ -224,9 +224,9 @@ const ShowProduct = ({
                 <div className="text-center py-3">
                   <i className="fa fa-info-circle mb-3 text-muted fs-4"></i>
                   <p className="small text-uppercase tracking-widest text-muted mb-0">
-                    {canReview.alreadyReviewed 
-                      ? "You have already reviewed this product." 
-                      : canReview.hasPurchased 
+                    {canReview.alreadyReviewed
+                      ? "You have already reviewed this product."
+                      : canReview.hasPurchased
                         ? "Your order is being processed. You can review after delivery."
                         : "Only customers who purchased this product can leave a review."}
                   </p>
@@ -402,7 +402,7 @@ const Product = () => {
       ) : error ? (
         <div className="text-center text-danger py-5">{error}</div>
       ) : (
-        <ShowProduct 
+        <ShowProduct
           product={product}
           reviews={reviews}
           canReview={canReview}

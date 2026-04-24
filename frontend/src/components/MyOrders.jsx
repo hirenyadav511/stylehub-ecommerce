@@ -64,44 +64,44 @@ const MyOrders = () => {
                 <div className="card-body">
                   <div className="row">
                     <div className="col-md-8">
-                       <ul className="list-group list-group-flush">
-                          {order.products.map((item, idx) => (
-                            <li key={idx} className="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 ps-0">
-                               <span className="d-flex align-items-center gap-3">
-                                 {(item.image || item.productId?.image) && (
-                                   <img 
-                                     src={getImageUrl(item.image || item.productId?.image)} 
-                                     width={50} 
-                                     height={50} 
-                                     className="object-cover rounded shadow-sm" 
-                                     alt="product" 
-                                   />
-                                 )}
-                                 <div>
-                                   <div className="fw-bold">{item.name || item.productId?.title || 'Unknown Product'}</div>
-                                   {(item.size || item.color) && (
-                                     <small className="text-muted">{item.size} / {item.color}</small>
-                                   )}
-                                 </div>
-                               </span>
-                               <span>{item.quantity} × {formatPrice(item.price)}</span>
-                            </li>
-                          ))}
-                       </ul>
+                      <ul className="list-group list-group-flush">
+                        {order.products.map((item, idx) => (
+                          <li key={idx} className="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 ps-0">
+                            <span className="d-flex align-items-center gap-3">
+                              {(item.image || item.productId?.image) && (
+                                <img
+                                  src={getImageUrl(item.image || item.productId?.image)}
+                                  width={50}
+                                  height={50}
+                                  className="object-cover rounded shadow-sm"
+                                  alt="product"
+                                />
+                              )}
+                              <div>
+                                <div className="fw-bold">{item.name || item.productId?.title || 'Unknown Product'}</div>
+                                {(item.size || item.color) && (
+                                  <small className="text-muted">{item.size} / {item.color}</small>
+                                )}
+                              </div>
+                            </span>
+                            <span>{item.quantity} × {formatPrice(item.price)}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                     <div className="col-md-4 text-end d-flex flex-column justify-content-between">
-                       <div>
-                         <h5>Total: {formatPrice(order.totalAmount)}</h5>
-                         <small className="text-muted">Placed on {new Date(order.createdAt).toLocaleDateString()}</small>
-                       </div>
-                       <div className="mt-3">
-                         <button 
-                           className={`btn btn-sm ${activeTrackingId === order._id ? 'btn-secondary' : 'btn-outline-primary'}`}
-                           onClick={() => setActiveTrackingId(activeTrackingId === order._id ? null : order._id)}
-                         >
-                           {activeTrackingId === order._id ? "Hide Tracking" : "Track Order"}
-                         </button>
-                       </div>
+                      <div>
+                        <h5>Total: {formatPrice(order.totalAmount)}</h5>
+                        <small className="text-muted">Placed on {new Date(order.createdAt).toLocaleDateString()}</small>
+                      </div>
+                      <div className="mt-3">
+                        <button
+                          className={`btn btn-sm ${activeTrackingId === order._id ? 'btn-secondary' : 'btn-outline-primary'}`}
+                          onClick={() => setActiveTrackingId(activeTrackingId === order._id ? null : order._id)}
+                        >
+                          {activeTrackingId === order._id ? "Hide Tracking" : "Track Order"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {activeTrackingId === order._id && (

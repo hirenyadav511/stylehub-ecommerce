@@ -22,19 +22,19 @@ const Wishlist = () => {
       <h2 className="display-6 fw-bolder text-center mb-5">Your Wishlist</h2>
       {wishlist.length === 0 ? (
         <div className="text-center">
-            <p className="lead">Your wishlist is empty.</p>
-            <NavLink to="/products" className="btn btn-outline-dark">Go Shopping</NavLink>
+          <p className="lead">Your wishlist is empty.</p>
+          <NavLink to="/products" className="btn btn-outline-dark">Go Shopping</NavLink>
         </div>
       ) : (
         <div className="row justify-content-center">
           {wishlist.map((product) => (
             <div key={product.id} className="col-md-3 mb-4">
               <div className="card h-100 text-center p-4">
-                <img 
-                  src={getImageUrl(product.images?.[0] || product.image)} 
-                  className="card-img-top object-fit-contain" 
-                  alt={product.name} 
-                  height="250px" 
+                <img
+                  src={getImageUrl(product.images?.[0] || product.image)}
+                  className="card-img-top object-fit-contain"
+                  alt={product.name}
+                  height="250px"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "https://via.placeholder.com/250?text=No+Image";
@@ -46,7 +46,7 @@ const Wishlist = () => {
                   <div className="d-flex justify-content-center gap-2">
                     <button className="btn btn-outline-dark" onClick={() => addItem(product)}>Add to Cart</button>
                     <button className="btn btn-danger" onClick={() => toggleWishlist(product)}>
-                        <i className="fa fa-trash"></i>
+                      <i className="fa fa-trash"></i>
                     </button>
                   </div>
                 </div>

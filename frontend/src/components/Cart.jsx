@@ -84,8 +84,8 @@ const Cart = () => {
             </div>
           </div>
           <div className="col-12 col-md-5 text-md-end mt-3 mt-md-0">
-             <div className="fw-bold">{formatPrice(item.qty * item.price)}</div>
-             <small className="text-muted">{item.qty} x {formatPrice(item.price)}</small>
+            <div className="fw-bold">{formatPrice(item.qty * item.price)}</div>
+            <small className="text-muted">{item.qty} x {formatPrice(item.price)}</small>
           </div>
         </div>
       </div>
@@ -170,7 +170,7 @@ const Cart = () => {
         {cart.length === 0 ? emptyCart() : (
           <>
             <div className="mb-5">
-               {cart.map(cartItems)}
+              {cart.map(cartItems)}
             </div>
             {cartSummary()}
           </>

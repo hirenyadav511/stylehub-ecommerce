@@ -187,29 +187,29 @@ const Checkout = () => {
             <div className="card border shadow-sm p-2">
               <div className="card-body p-md-5">
                 {currentStep === 1 && (
-                  <ProductSummary 
-                    cart={cart} 
-                    subtotal={subtotal} 
-                    discount={discount} 
-                    total={total} 
-                    nextStep={nextStep} 
+                  <ProductSummary
+                    cart={cart}
+                    subtotal={subtotal}
+                    discount={discount}
+                    total={total}
+                    nextStep={nextStep}
                   />
                 )}
                 {currentStep === 2 && (
-                  <ShippingDetails 
-                    shippingData={shippingData} 
-                    handleInputChange={handleInputChange} 
-                    nextStep={nextStep} 
-                    prevStep={prevStep} 
+                  <ShippingDetails
+                    shippingData={shippingData}
+                    handleInputChange={handleInputChange}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
                   />
                 )}
                 {currentStep === 3 && (
-                  <PaymentStep 
-                    shippingData={shippingData} 
-                    total={total} 
-                    discount={discount} 
-                    couponCode={couponCode} 
-                    prevStep={prevStep} 
+                  <PaymentStep
+                    shippingData={shippingData}
+                    total={total}
+                    discount={discount}
+                    couponCode={couponCode}
+                    prevStep={prevStep}
                   />
                 )}
               </div>
