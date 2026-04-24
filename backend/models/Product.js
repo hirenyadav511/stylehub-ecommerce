@@ -4,7 +4,6 @@ const variantSchema = mongoose.Schema({
     size: {
         type: String,
         required: true,
-        enum: ['S', 'M', 'L', 'XL', 'XXL'],
     },
     color: {
         type: String,
@@ -42,12 +41,7 @@ const productSchema = mongoose.Schema(
         category: {
             type: String,
             required: [true, 'Please add a category'],
-            enum: ['T-Shirts', 'Shirts', 'Jeans', 'Hoodies', 'Jackets', 'Accessories'],
-        },
-        gender: {
-            type: String,
-            required: [true, 'Please specify gender'],
-            enum: ['Men', 'Women', 'Unisex'],
+            enum: ['T-Shirts', 'Shirts', 'Jeans', 'Hoodies', 'Jackets', 'Accessories', 'Shoes'],
         },
         material: {
             type: String,
@@ -96,7 +90,6 @@ const productSchema = mongoose.Schema(
 productSchema.index({ name: 'text', brand: 'text' }); // Broad search for name and brand
 productSchema.index({ category: 1 });
 productSchema.index({ price: 1 });
-productSchema.index({ gender: 1 });
 
 const Product = mongoose.model('Product', productSchema);
 

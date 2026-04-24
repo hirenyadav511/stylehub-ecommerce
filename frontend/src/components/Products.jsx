@@ -7,6 +7,8 @@ import { useAuth } from "@clerk/clerk-react";
 import api from "../utils/api";
 import { useDebounce } from "../hooks/useDebounce";
 import { formatPrice } from "../utils/formatters";
+import { PRODUCT_CATEGORIES } from "../utils/constants";
+
 
 const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
     const [data, setData] = useState([]);
@@ -18,7 +20,6 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
     const debouncedKeyword = useDebounce(keyword, 500);
     const [category, setCategory] = useState('');
     const [brand, setBrand] = useState('');
-    const [gender, setGender] = useState('');
     const [size, setSize] = useState('');
     const [color, setColor] = useState('');
     const [minPrice, setMinPrice] = useState('');
@@ -49,7 +50,6 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                         keyword: debouncedKeyword,
                         category,
                         brand,
-                        gender,
                         size,
                         color,
                         minPrice,
@@ -86,7 +86,7 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
 
         fetchProducts();
         return () => { isMounted = false; };
-    }, [debouncedKeyword, category, brand, gender, size, color, minPrice, maxPrice, rating, inStock, sort, page, isFeatured, limit]);
+    }, [debouncedKeyword, category, brand, size, color, minPrice, maxPrice, rating, inStock, sort, page, isFeatured, limit]);
 
     const getImageUrl = (imagePath) => {
         if (!imagePath) return "";
@@ -99,7 +99,6 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
         setKeyword('');
         setCategory('');
         setBrand('');
-        setGender('');
         setSize('');
         setColor('');
         setMinPrice('');
@@ -126,7 +125,8 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                     {/* Category Tabs - Centered */}
                     <div className="col-12 text-center mb-4">
                         <div className="d-flex justify-content-center gap-2 flex-wrap">
-                            {['All', 'T-Shirts', 'Shirts', 'Jeans', 'Jackets'].map(cat => (
+                            {['All', ...PRODUCT_CATEGORIES].map(cat => (
+
                                 <button
                                     key={cat}
                                     className={`btn btn-sm ${category === (cat === 'All' ? '' : cat) ? 'btn-dark' : 'btn-outline-dark'}`}
@@ -195,15 +195,7 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
                     <div className="col-12">
                         <div className="p-4 bg-light">
                             <div className="row g-4">
-                                <div className="col-md-3">
-                                    <label className="small fw-bold text-uppercase mb-2 d-block">Gender</label>
-                                    <select className="form-select" value={gender} onChange={(e) => setGender(e.target.value)}>
-                                        <option value="">ALL GENDERS</option>
-                                        <option value="Men">MEN</option>
-                                        <option value="Women">WOMEN</option>
-                                    </select>
-                                </div>
-                                <div className="col-md-3">
+                                    <div className="col-md-3">
                                     <label className="small fw-bold text-uppercase mb-2 d-block">Price (₹)</label>
                                     <div className="d-flex gap-2">
                                         <input type="number" className="form-control" placeholder="MIN" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />

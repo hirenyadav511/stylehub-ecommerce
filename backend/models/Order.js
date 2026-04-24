@@ -52,6 +52,19 @@ const orderSchema = mongoose.Schema(
             type: Number,
             default: 0.0,
         },
+        shippingAddress: {
+            fullName: { type: String, required: true },
+            address: { type: String, required: true },
+            city: { type: String, required: true },
+            state: { type: String, required: true },
+            pincode: { type: String, required: true },
+            phone: { type: String, required: true },
+        },
+        paymentMethod: {
+            type: String,
+            required: true,
+            default: 'stripe',
+        },
     },
     {
         timestamps: true,

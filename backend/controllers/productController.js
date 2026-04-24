@@ -8,7 +8,7 @@ import Product from '../models/Product.js';
  */
 const getProducts = asyncHandler(async (req, res) => {
     // Admin panel usually doesn't send pageNumber and expects an array.
-    if (!req.query.pageNumber && !req.query.keyword && !req.query.category && !req.query.brand && !req.query.gender && !req.query.size && !req.query.color) {
+    if (!req.query.pageNumber && !req.query.keyword && !req.query.category && !req.query.brand && !req.query.size && !req.query.color) {
         const products = await Product.find({}).sort({ createdAt: -1 });
         return res.json(products);
     }
@@ -28,7 +28,6 @@ const getProducts = asyncHandler(async (req, res) => {
 
     const category = req.query.category ? { category: req.query.category } : {};
     const brand = req.query.brand ? { brand: req.query.brand } : {};
-    const gender = req.query.gender ? { gender: req.query.gender } : {};
     
     // Variant-based filters
     const size = req.query.size ? { "variants.size": req.query.size } : {};
@@ -53,7 +52,6 @@ const getProducts = asyncHandler(async (req, res) => {
         ...keyword, 
         ...category, 
         ...brand,
-        ...gender,
         ...size,
         ...color,
         ...priceFilter, 
@@ -105,7 +103,7 @@ const getProductById = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, title, price, description, category, images, image, brand, gender, material, variants } = req.body;
+    const { name, title, price, description, category, images, image, brand, material, variants } = req.body;
 
     const finalName = name || title;
     const finalImages = images && images.length > 0 ? images : (image ? [image] : []);
@@ -138,7 +136,6 @@ const createProduct = asyncHandler(async (req, res) => {
         images: finalImages,
         image: finalImages[0], // Maintains compatibility with older frontend components
         brand,
-        gender,
         material,
         variants,
         stock: variants.reduce((acc, v) => acc + (v.stock || 0), 0) // Automatically calculate total stock
@@ -158,7 +155,7 @@ const createProduct = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 const updateProduct = asyncHandler(async (req, res) => {
-    const { name, title, price, description, category, image, images, stock, rating, brand, gender, material, variants } = req.body;
+    const { name, title, price, description, category, image, images, stock, rating, brand, material, variants } = req.body;
 
     const product = await Product.findById(req.params.id);
 
@@ -179,7 +176,6 @@ const updateProduct = asyncHandler(async (req, res) => {
         product.stock = stock !== undefined ? stock : product.stock;
         product.rating = rating !== undefined ? rating : product.rating;
         product.brand = brand || product.brand;
-        product.gender = gender || product.gender;
         product.material = material || product.material;
         product.variants = variants || product.variants;
 

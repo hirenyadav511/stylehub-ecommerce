@@ -15,7 +15,11 @@ const Dashboard = () => {
         
         const productsCount = (prodRes.data.products || prodRes.data).length || 0;
         const ordersList = orderRes.data.orders || [];
-        const totalRev = ordersList.reduce((acc, curr) => acc + (curr.totalAmount || 0), 0);
+        
+        // Only count revenue if paymentStatus is "paid"
+        const totalRev = ordersList
+          .filter(order => order.paymentStatus === 'paid')
+          .reduce((acc, curr) => acc + (curr.totalAmount || 0), 0);
 
         setStats({ products: productsCount, orders: ordersList.length, revenue: totalRev });
       } catch (error) {

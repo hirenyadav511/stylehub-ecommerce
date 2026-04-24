@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { formatPrice } from "../utils/formatters";
+import { CATEGORY_SIZES, PRODUCT_CATEGORIES } from "../utils/constants";
+
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -15,7 +17,6 @@ const Products = () => {
     price: "",
     category: "T-Shirts", // Default
     brand: "",
-    gender: "Men",
     material: "",
     images: [],
     description: "",
@@ -31,7 +32,6 @@ const Products = () => {
 
   // Admin Filtering States
   const [categoryFilter, setCategoryFilter] = useState("");
-  const [genderFilter, setGenderFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -41,7 +41,6 @@ const Products = () => {
       const { data } = await api.get("/products", {
         params: {
             category: categoryFilter,
-            gender: genderFilter,
             brand: brandFilter,
             keyword: searchTerm
         }
@@ -56,10 +55,19 @@ const Products = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [categoryFilter, genderFilter, brandFilter, searchTerm]);
+  }, [categoryFilter, brandFilter, searchTerm]);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Reset variant size if category changes
+    if (name === "category") {
+      setVariantInput(prev => ({
+        ...prev,
+        size: CATEGORY_SIZES[value]?.[0] || ""
+      }));
+    }
   };
 
   const openAddModal = () => {
@@ -68,11 +76,15 @@ const Products = () => {
       price: "",
       category: "T-Shirts",
       brand: "",
-      gender: "Men",
       material: "",
       images: [],
       description: "",
       variants: [],
+    });
+    setVariantInput({
+      size: CATEGORY_SIZES["T-Shirts"][0],
+      color: "",
+      stock: 0
     });
     setIsEditing(false);
     setShowModal(true);
@@ -84,11 +96,15 @@ const Products = () => {
       price: product.price || "",
       category: product.category || "T-Shirts",
       brand: product.brand || "",
-      gender: product.gender || "Men",
       material: product.material || "",
       images: product.images || (product.image ? [product.image] : []),
       description: product.description || "",
       variants: product.variants || [],
+    });
+    setVariantInput({
+      size: CATEGORY_SIZES[product.category || "T-Shirts"]?.[0] || "",
+      color: "",
+      stock: 0
     });
     setCurrentId(product._id);
     setIsEditing(true);
@@ -161,7 +177,7 @@ const Products = () => {
       ...prev,
       variants: [...prev.variants, variantInput]
     }));
-    setVariantInput({ size: "M", color: "", stock: 0 });
+    setVariantInput({ size: CATEGORY_SIZES[formData.category]?.[0] || "", color: "", stock: 0 });
   };
 
   const removeVariant = (index) => {
@@ -218,17 +234,7 @@ const Products = () => {
                 className="border p-2 rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-blue-500"
             >
                 <option value="">All Categories</option>
-                {['T-Shirts', 'Shirts', 'Jeans', 'Hoodies', 'Jackets'].map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-
-            {/* Gender Filter */}
-            <select 
-                value={genderFilter} 
-                onChange={(e) => setGenderFilter(e.target.value)}
-                className="border p-2 rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-blue-500"
-            >
-                <option value="">All Genders</option>
-                {['Men', 'Women', 'Unisex'].map(g => <option key={g} value={g}>{g}</option>)}
+                {PRODUCT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
 
             <button
@@ -350,13 +356,7 @@ const Products = () => {
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
                   <select name="category" value={formData.category} onChange={handleInputChange} className="w-full border p-2 rounded">
-                    {['T-Shirts', 'Shirts', 'Jeans', 'Hoodies', 'Jackets'].map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full border p-2 rounded">
-                    {['Men', 'Women', 'Unisex'].map(g => <option key={g} value={g}>{g}</option>)}
+                    {PRODUCT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
@@ -371,7 +371,7 @@ const Products = () => {
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-3">Inventory Variants</label>
                 <div className="grid grid-cols-4 gap-2 mb-3">
                     <select value={variantInput.size} onChange={(e) => setVariantInput({...variantInput, size: e.target.value})} className="border p-2 rounded text-sm">
-                      {['S', 'M', 'L', 'XL', 'XXL'].map(s => <option key={s} value={s}>{s}</option>)}
+                      {(CATEGORY_SIZES[formData.category] || []).map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                     <input type="text" value={variantInput.color} onChange={(e) => setVariantInput({...variantInput, color: e.target.value})} placeholder="Color" className="border p-2 rounded text-sm col-span-1" />
                     <input type="number" value={variantInput.stock} onChange={(e) => setVariantInput({...variantInput, stock: parseInt(e.target.value)})} placeholder="Stock" className="border p-2 rounded text-sm" />

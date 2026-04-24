@@ -55,11 +55,17 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 
     if (order) {
         order.status = status;
+        
+        // COD Auto-Payment Logic: Mark as paid if delivered and method is COD
+        if (status === 'delivered' && order.paymentMethod === 'cod') {
+            order.paymentStatus = 'paid';
+        }
+
         const updatedOrder = await order.save();
         res.json({
             success: true,
             order: updatedOrder,
-            message: `Order status updated to ${status}`
+            message: `Order status updated to ${status}${order.paymentStatus === 'paid' ? ' and marked as Paid' : ''}`
         });
     } else {
         res.status(404);
@@ -72,7 +78,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
  * @name    placeOrder
  */
 export const placeOrder = asyncHandler(async (req, res) => {
-    const { orderItems, totalAmount, paymentStatus, couponCode, discountAmount } = req.body;
+    const { orderItems, totalAmount, paymentStatus, couponCode, discountAmount, shippingAddress, paymentMethod } = req.body;
     const userId = req.auth.userId;
 
     if (orderItems && orderItems.length === 0) {
@@ -87,6 +93,8 @@ export const placeOrder = asyncHandler(async (req, res) => {
         paymentStatus: paymentStatus || 'pending',
         couponCode,
         discountAmount: discountAmount || 0,
+        shippingAddress,
+        paymentMethod: paymentMethod || 'stripe',
     });
 
     // If coupon used, increment its count
