@@ -6,9 +6,8 @@ import { useAuth } from "@clerk/clerk-react";
 import api from "../utils/api";
 import { useDebounce } from "../hooks/useDebounce";
 import { formatPrice } from "../utils/formatters";
-import { PRODUCT_CATEGORIES } from "../utils/constants";
 
-const Products = ({ limit = null, hideHeader = false }) => {
+const Products = ({ limit = null }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -19,11 +18,8 @@ const Products = ({ limit = null, hideHeader = false }) => {
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
 
-  const [showFilters, setShowFilters] = useState(false);
-
-  const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+  const { toggleWishlist } = useContext(WishlistContext);
   const navigate = useNavigate();
   const { isSignedIn } = useAuth();
 
@@ -47,7 +43,6 @@ const Products = ({ limit = null, hideHeader = false }) => {
         if (limit) products = products.slice(0, limit);
 
         setData(products.map((p) => ({ ...p, id: p._id })));
-        setPages(data.pages || 1);
         setLoading(false);
       } catch (err) {
         setError(err.message || "Error fetching products");
@@ -64,14 +59,12 @@ const Products = ({ limit = null, hideHeader = false }) => {
   return (
     <div className="container py-4">
 
-      <div className="row mb-4">
-        <input
-          className="form-control"
-          placeholder="Search products..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-        />
-      </div>
+      <input
+        className="form-control mb-4"
+        placeholder="Search products..."
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+      />
 
       {loading ? (
         <Skeleton count={6} height={300} />
@@ -89,7 +82,6 @@ const Products = ({ limit = null, hideHeader = false }) => {
                   <img
                     src={getImageUrl(product.images?.[0])}
                     className="img-fluid"
-                    alt=""
                   />
                 </NavLink>
 
@@ -98,7 +90,7 @@ const Products = ({ limit = null, hideHeader = false }) => {
                 <p>{formatPrice(product.price)}</p>
 
                 <button
-                  className="btn btn-sm btn-dark w-100"
+                  className="btn btn-dark w-100"
                   onClick={() =>
                     isSignedIn ? toggleWishlist(product) : navigate("/login")
                   }
