@@ -15,9 +15,9 @@ const Products = ({ limit = null }) => {
     const [keyword, setKeyword] = useState("");
     const debouncedKeyword = useDebounce(keyword, 500);
 
-    const [category, setCategory] = useState("");
-    const [sort, setSort] = useState("newest");
-    const [page, setPage] = useState(1);
+    const [category] = useState("");
+    const [sort] = useState("newest");
+    const [page] = useState(1);
 
     const { toggleWishlist } = useContext(WishlistContext);
     const navigate = useNavigate();
@@ -49,9 +49,8 @@ const Products = ({ limit = null }) => {
                 setLoading(false);
             }
         };
-
         fetchProducts();
-    }, [debouncedKeyword, category, sort, page]);
+    }, [debouncedKeyword, category, sort, page, limit]);
 
     const getImageUrl = (img) =>
         img?.startsWith("http") ? img : `http://localhost:5001${img}`;
@@ -82,6 +81,7 @@ const Products = ({ limit = null }) => {
                                     <img
                                         src={getImageUrl(product.images?.[0])}
                                         className="img-fluid"
+                                        alt={product.name}
                                     />
                                 </NavLink>
 
