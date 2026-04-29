@@ -16,7 +16,7 @@ const MyOrders = () => {
     if (!imagePath) return "";
     return imagePath.startsWith("http")
       ? imagePath
-      : `http://localhost:5001${imagePath}`;
+      : `${process.env.REACT_APP_API_URL}${imagePath}`;
   };
 
   useEffect(() => {

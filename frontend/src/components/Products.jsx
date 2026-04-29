@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
-import { CartContext } from "../context/CartContext";
+
 import { WishlistContext } from "../context/WishlistContext";
 import { useAuth } from "@clerk/clerk-react";
 import api, { getImageUrl } from "../utils/api";
@@ -32,7 +32,7 @@ const Products = ({ isFeatured = false, limit = null, hideHeader = false }) => {
 
     const [showFilters, setShowFilters] = useState(false);
 
-    const { addItem } = useContext(CartContext);
+
     const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
     const navigate = useNavigate();
     const { isSignedIn } = useAuth();
