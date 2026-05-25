@@ -1,10 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import tshirtImg from "../assests/tshirt.jpg";
-import shirtImg from "../assests/shirt.jpg";
-import jeansImg from "../assests/jeans.jpg";
-import jacketImg from "../assests/jacket.jpg";
+import tshirtImg from "../assests/tshirt.png";
+import shirtImg from "../assests/shirt.png";
+import jeansImg from "../assests/jeans.png";
+import jacketImg from "../assests/jacket.png";
 
 const CategoriesSection = () => {
   const navigate = useNavigate();
